@@ -72,12 +72,13 @@ proc encode(this: Encoder, obj: BencodeType): string =
   of btList: result = this.encode_l(obj.l)
   of btDict: result = this.encode_d(obj.d)
 
-#proc decode(this: Decoder,  source: string) : (BencodeType, int)
+proc decode(this: Decoder,  source: string) : (BencodeType, int)
 
-
+# 返回BencodeType，字符总长度
 proc decode_s(this: Decoder, s: string): (BencodeType, int) =
   let lengthpart = s.split(":")[0]
   let sizelength = lengthpart.len
+  echo lengthpart
   let strlen = parseInt(lengthpart)
 
   return (
@@ -85,6 +86,61 @@ proc decode_s(this: Decoder, s: string): (BencodeType, int) =
     sizelength + 1 + strlen # eat string length
   )
 
+proc decode_i(this: Decoder, s: string): (BencodeType, int) =
+  let epos = s.find('e')
+  
+  let i = parseInt(s[1..<epos])
+  
+  return (
+    BencodeType(kind: BencodeKind.btInt, i: i),
+    epos + 1
+  )
+
+proc decode_l(this: Decoder, s: string): (BencodeType, int) =
+  # l .. e
+  var els = newSeq[BencodeType]()
+  var curchar = s[1]
+  var idx = 1
+  while idx < s.len:
+    curchar = s[idx]
+    if curchar == 'e': # 结束的e,其他的e在decode里面eat掉
+      idx += 1
+      break
+    
+    let pair = this.decode(s[idx .. pred(s.len)])
+    let obj = pair[0]
+    let next_obj_pos = pair[1]
+    els.add(obj)
+    idx += next_obj_pos
+
+  return (BencodeType(kind: BencodeKind.btList, l: els), idx)
+
+
+proc decode(this: Decoder, source: string): (BencodeType, int) =
+  var curchar = source[0]
+  var idx = 0
+  while idx < source.len:
+    curchar = source[idx]
+    case curchar
+    of 'i':
+      let pair = this.decode_i(source[idx .. ^1])
+      let obj = pair[0]
+      let next_obj_pos = pair[1]
+      idx += next_obj_pos
+      return (obj, idx)
+    of 'l':
+      let pair = this.decode_l(source[idx .. ^1])
+      let obj = pair[0]
+      let next_obj_pos = pair[1]
+      idx += next_obj_pos
+      return (obj, idx)
+    else:
+      # string
+      let pair = this.decode_s(source[idx .. ^1])
+      let obj = pair[0]
+      let next_obj_pos = pair[1]
+      idx += next_obj_pos
+      return (obj, idx)
 
 when isMainModule:
   var btDictSample1 = initOrderedTable[BencodeType, BencodeType]()
@@ -101,5 +157,5 @@ when isMainModule:
   )
   let encoder = new(Encoder)
   let decoder = new(Decoder)
-  echo encoder.encode(bt)
-  echo decoder.decode_s("3:abc")
+  #echo encoder.encode(bt)
+  echo decoder.decode("li120ei492e3:abce")
