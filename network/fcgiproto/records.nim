@@ -1,0 +1,3 @@
+type
+  FCGIRecord = ref object
+    
