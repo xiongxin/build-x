@@ -24,6 +24,47 @@ proc open*(host = "localhost", port = 6379.Port, ssl = false, timeout = 0) :
   result.socket.connect(host, port)
   result.connected = true
 
+proc openAsync*(host = "localhost", port = 6379.Port, ssl = false, timeout = 0) :
+  Future[AsyncRedis] {.async.} = 
+  result = AsyncRedis(
+    socket: newAsyncSocket()
+  )
+
+  result.pipeline = @[]
+  result.timeout = timeout
+  ## ... code omitted for supporting ssl
+  await result.socket.connect(host, port)
+  result.connected = true
+
+proc exeCommand*(this: Redis|AsyncRedis, command: string, args: seq[string]) :
+  Future[RedisValue] {.multisync.} =
+  let cmdArgs = concat(@[command], args)
+  var cmdAsRedisValues = newSeq[RedisValue]()
+  for cmd in cmdArgs:
+    cmdAsRedisValues.add(RedisValue(kind: vkBulkStr, bs: cmd))
+  var arr = RedisValue(kind: vkArray, l: cmdAsRedisValues)
+  await this.socket.send(encode(arr))
+  let form = await this.readForm()
+  let val = decodeString(form)
+  return val
+
+proc readMany(this: Redis|AsyncRedis, count: int = 1): Future[string] {.multisync.} =
+  if count == 0:
+    return ""
+  let data = await this.receiveManaged(count)
+  return data
+
+proc receiveManaged*(this: Redis|AsyncRedis, size = 1): Future[string] {.multisync.} =
+  result = newString(size)
+  when this is Redis:
+    if this.timeout == 0:
+      discard this.socket.recv(result, size)
+    else:
+      discard this.socket.recv(result, size, this.timeout)
+  else:
+    discard await this.socket.recvInto(addr result[0], size)
+
+
 when isMainModule:
   let redis = open()
   echo repr(redis)
