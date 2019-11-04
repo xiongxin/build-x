@@ -2,9 +2,13 @@ const warn = @import("std").debug.warn;
 
 var y: i32 = add(10, x);
 const x: i32 = add(12, 34);
-
+const G = struct {
+    var gi: i32 = 12;
+};
 
 pub fn main() void {
+    G.gi = 222;
+    warn("G.gi = {} \n", G.gi);
     warn("x = {} \n", x);
     warn("y = {} \n", y);
     warn("S.x = {} \n", foo());
@@ -14,7 +18,7 @@ pub fn main() void {
 
     warn("200 * 2 = {} \n", u8(200) *% 2);
 
-    const value: ?u32 = null;
+    const value: ?u32 = 1;
     warn("value = {} \n", value.?);
     
 }
