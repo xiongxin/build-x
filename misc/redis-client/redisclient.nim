@@ -24,57 +24,86 @@ proc open*(host = "localhost", port = 6379.Port, ssl = false, timeout = 0) :
   result.socket.connect(host, port)
   result.connected = true
 
-proc openAsync*(host = "localhost", port = 6379.Port, ssl = false, timeout = 0) :
-  Future[AsyncRedis] {.async.} = 
-  result = AsyncRedis(
-    socket: newAsyncSocket()
-  )
+# proc openAsync*(host = "localhost", port = 6379.Port, ssl = false, timeout = 0) :
+#   Future[AsyncRedis] {.async.} = 
+#   result = AsyncRedis(
+#     socket: newAsyncSocket()
+#   )
 
-  result.pipeline = @[]
-  result.timeout = timeout
-  ## ... code omitted for supporting ssl
-  await result.socket.connect(host, port)
-  result.connected = true
-
-proc readForm(this: Redis|AsyncRedis): Future[string]
-
-proc exeCommand*(this: Redis|AsyncRedis, command: string, args: seq[string]) : Future[RedisValue] {.multisync.} =
+#   result.pipeline = @[]
+#   result.timeout = timeout
+#   ## ... code omitted for supporting ssl
+#   await result.socket.connect(host, port)
+#   result.connected = true
+proc readForm(this: Redis): string
+proc exeCommand*(this: Redis, command: string, args: seq[string]) : RedisValue =
   let cmdArgs = concat(@[command], args)
   var cmdAsRedisValues = newSeq[RedisValue]()
   for cmd in cmdArgs:
     cmdAsRedisValues.add(RedisValue(kind: vkBulkStr, bs: cmd))
   var arr = RedisValue(kind: vkArray, l: cmdAsRedisValues)
-  await this.socket.send(encode(arr))
-  let form = await this.readForm()
+  this.socket.send(encode(arr))
+  let form = this.readForm()
   let val = decodeString(form)
   return val
 
 # Readers
 # readForm is responsible for reading X amount of bytes from the socket
 # until we have a complete RedisValue object
+proc receiveManaged*(this: Redis, size = 1): string =
+  result = newString(size)
+  if this.timeout == 0:
+    discard this.socket.recv(result, size)
+  else:
+    discard this.socket.recv(result, size, this.timeout)
 
-# encodes some information about the values lengths we can totally make use of that
-proc readMany(this: Redis|AsyncRedis, count: int = 1): Future[string] {.multisync.} =
-  if count == 0:
-    return ""
-  let data = await this.receiveManaged(count)
+# 读取到指定的终止符为止
+proc readStream(this: Redis, breakAfter: string): string =
+  var data = ""
+  while true:
+    if data.endsWith(breakAfter):
+      break
+    let strRead = this.receiveManaged()
+    data &= strRead
   return data
 
-proc receiveManaged*(this: Redis|AsyncRedis, size = 1): Future[string] {.multisync.} =
-  result = newString(size)
-  when this is Redis:
-    if this.timeout == 0:
-      discard this.socket.recv(result, size)
-    else:
-      discard this.socket.recv(result, size, this.timeout)
-  else:
-    discard await this.socket.recvInto(addr result[0], size)
+# encodes some information about the values lengths we can totally make use of that
+proc readMany(this: Redis, count: int = 1): string =
+  if count == 0:
+    return ""
+  let data = this.receiveManaged(count)
+  return data
 
-proc readForm(this: Redis|AsyncRedis): Future[string] {.multisync.} =
+
+
+proc readForm(this: Redis): string =
   var form = ""
+  while true:
+    let b = this.receiveManaged()
+    form &= b
+    if b == "+":
+      form &= this.readStream(CRLF)
+      return form
+    elif b == "$":
+      let bulklenstr = this.readStream(CRLF)
+      let bulklenI = parseInt(bulklenstr.strip()) 
+      form &= bulklenstr
+      if bulklenI == -1:
+        form &= CRLF
+      # elif bulklenI == 0:
+      #   echo "IN HERE.."
+      #   form &= await this.readMany(1)
+      #   echo fmt"FORM NOW >{form}<"
+      #   form &= await this.readStream(CRLF)
+        # echo fmt"FORM NOW >{form}<"
+      else:
+        form &= this.readMany(bulklenI)
+        form &= this.readStream(CRLF)
+
+      return form
 
   return form
 
 when isMainModule:
   let redis = open()
-  echo repr(redis)
+  echo redis.exeCommand("get", @["a"])
