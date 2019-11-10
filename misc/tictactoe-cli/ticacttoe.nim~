@@ -24,7 +24,6 @@ type
     board*: Board
     aiPlayer: string
     difficulty*: int
-  Move = tuple[score: int, idx: int]
 
 
 proc newBoard(): Board =
@@ -71,9 +70,6 @@ proc emptySpots(this: Board): seq[int] =
   
   result = emptyindices
 
-
-proc getBestMove(this: Game, board: Board, player: string) : Move 
-
 proc startGame*(this: Game) =
   while true:
     echo this.board
@@ -81,16 +77,6 @@ proc startGame*(this: Game) =
       stdout.write("Enter move:")
       let move = stdin.readLine()
       this.board.list[parseInt($move)] = this.currentPlayer
-    else:
-      if this.currentPlayer == this.aiPlayer:
-        let emptySpots = this.board.emptySpots()
-        if len(emptySpots) <= this.difficulty:
-          echo("AI MOVE..")
-          let move = this.getBestMove(this.board, this.aiPlayer)
-          this.board.list[move.idx] = this.aiPlayer
-        else:
-          echo("RANDOM GUESS")
-          this.board.list[emptySpots.rand()] = this.aiPlayer
     this.changePlayer()
     let (done, winner) = this.board.done()
     if done:
@@ -101,36 +87,10 @@ proc startGame*(this: Game) =
         echo "WINNER IS : ", winner
       break
 
-proc getBestMove(this: Game, board: Board, player: string) : Move =
-  let (done, winner) = board.done()
-  if done == true:
-    if winner == this.aiPlayer:
-      return (score: 10, idx: 0)
-    elif winner != "tie": #human
-      return (score: -10, idx: 0)
-    else:
-      return (score: 0, idx: 0)
-  
-  let emptySpots = board.emptySpots()
-  var moves = newSeq[Move]()
-  for idx in emptySpots:
-    var newboard = newBoard()
-    newboard.list = map(board.list, proc(x: string): string = x)
-    newboard.list[idx] = player
-    let score = this.getBestMove(newboard, NEXT_PLAYER[player]).score
-    let idx = idx
-    let move = (score: score, idx: idx)
-    moves.add(move)
-
-  if player == this.aiPlayer:
-    return max(moves)
-  else:
-    return min(moves)
-
 when isMainModule:
   var borad = newBoard()
   echo $borad
   var es = borad.emptySpots()
   echo es
-  var game = newGame("O")
+  var game = newGame("X")
   game.startGame()
