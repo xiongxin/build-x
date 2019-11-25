@@ -1,5 +1,4 @@
-import options, tables, strutils,parseutils
-
+import options, tables, strutils,parseutils, asyncdispatch, asyncnet, cgi, strformat
 type
   HttpVersion* = enum
     HttpVer11,
@@ -22,6 +21,47 @@ type
   HttpHeaderValues = seq[string]
 
   HttpCode* = distinct range[0 .. 599]
+
+  Request = object
+    httpMethod*: HttpMethod
+    httpVersion*: HttpVersion
+    headers*: HttpHeaders
+    path*: string
+    body*: string
+    queryParams*: TableRef[string, string]
+    formData*: TableRef[string, string]
+    urlParams*: TableRef[string, string]
+
+  Response = object
+    headers: HttpHeaders
+    httpver: HttpVersion
+    code: HttpCode
+    content: string
+
+  ServerOptions* = object
+    address: string
+    port: Port
+    debug: bool
+
+  MiddlewareFunc* = proc(req: var Request, resp: var Response): bool
+  HandlerFunc* = proc(req: var Request, resp: var Response): void
+
+  RouterValue* = object
+    handlerFunc: HandlerFunc
+    httpMethod: HttpMethod
+    middlewares: seq[MiddlewareFunc]
+
+  Router* = object
+    table: Table[string, RouterValue]
+    notFoundHandler: HandlerFunc
+  
+  Servy = object
+    options: ServerOptions
+    router: Router
+    middlewares: seq[MiddlewareFunc]
+    staticDir: string
+    sock: AsyncSocket
+
 
 const
   Http100* = HttpCode(100)
@@ -71,7 +111,7 @@ const
   Http503* = HttpCode(503)
   Http504* = HttpCode(504)
   Http505* = HttpCode(505)
-
+const maxLine = 8 * 1024
 
 proc newHttpHeaders*(): HttpHeaders =
   result = new HttpHeaders
@@ -141,9 +181,21 @@ proc parseList(line: string, list: var seq[string], start: int): int =
   var i = 0
   var current = ""
   while start + i < line.len and line[start + i] notin { '\c', '\l' }:
-    i += line.skipWhitespace(start + i)
-    i += line.parseUntil(current, { '\c', '\l', ',' }, start + 1)
+    i += line.skipWhitespace(start + i) # 跳过前置空格
+    i += line.parseUntil(current, { '\c', '\l', ',' }, start + i)
     list.add(current)
+
+proc parseHeader*(line: string): tuple[key: string,value: seq[string]] =
+  result.value = @[]
+  var i = 0
+  i = line.parseUntil(result.key, ":")
+  inc(i)  # skip :
+  if i < len(line):
+    i += parseList(line, result.value, i)
+  elif result.key.len > 0:
+    result.value = @[""]
+  else:
+    result.value = @[]
 
 proc len*(headers: HttpHeaders): int = return headers.table.len
 
@@ -224,4 +276,78 @@ proc httpMethodFrom(txt: string) : Option[HttpMethod] =
     result = some(s2m[txt.toUpper()])
   else:
     result = none(HttpMethod)
-    
+
+proc parseQueryParams(content: string): TableRef[string, string]
+
+proc parseRequestFromConnection(s: ref Servy, conn: AsyncSocket): Future[Request] {.async.} =
+  result.queryParams = newTable[string, string]()
+  result.formData = newTable[string, string]()
+  result.urlParams = newTable[string, string]()
+
+  let requestLine = $await conn.recvLine(maxLength = maxLine)
+  echo fmt"requestLine: >{requestLine}< "
+  var meth, path, httpver: string
+  var parts = requestLine.splitWhitespace()
+  meth = parts[0]
+  path = parts[1]
+  httpver = parts[2]
+  var contentLength = 0
+  echo meth, path, httpver
+  let m = httpMethodFrom(meth)
+  if m.isSome():
+    result.httpMethod = m.get()
+  else:
+    echo meth
+    raise newException(OSError, "invalid httpmethod")
+  if "1.1" in httpver:
+    result.httpVersion = HttpVer11
+  elif "1.0" in httpver:
+    result.httpVersion = HttpVer10
+  else:
+    raise newException(OSError, "unsporrt http version")
+  
+  result.path = path
+
+  if "?" in path:
+    result.queryParams = parseQueryParams(path)
+  
+  result.headers = newHttpHeaders()
+
+  # parse headers
+  var line = ""
+  line = $(await conn.recvLine(maxLength = maxLine))
+  echo fmt"line: >{line}<"
+  while line != "\r\n":
+    # a header line
+    let kv = parseHeader(line)
+    result.headers[kv.key] = kv.value
+    if kv.key.toLowerAscii == "content-length":
+      contentLength = parseInt(kv.value[0])
+    line = $(await conn.recvLine(maxLength = maxLine))
+
+proc parseQueryParams(content: string): TableRef[string, string] =
+  result = newTable[string, string]()
+  var consumed = 0
+  if "?" notin content and "=" notin content:
+    return
+  if "?" in content:
+    consumed += content.skipUntil({ '?' }, consumed)
+
+  inc consumed # skip ?
+  
+  while consumed < content.len:
+    if "=" notin content[consumed .. ^1]:
+      break
+    var key = ""
+    var val = ""
+    consumed += content.parseUntil(key, "=", consumed)
+    inc consumed # skip =
+    consumed += content.parseUntil(val, "&", consumed)
+    inc consumed # skip &
+    result.add(decodeUrl(key), decodeUrl(val))
+    echo "consumed:" & $consumed
+    echo "contentLen:" & $content.len
+
+when isMainModule:
+  echo parseHeader("Content-Type: text/html")
+  echo parseQueryParams("/?a=1&b=22&aaa[]=asasdf&aaa[]=xxx&aaa[]=ddd").getOrDefault("aaa[]")
