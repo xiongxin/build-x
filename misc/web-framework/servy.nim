@@ -1,4 +1,8 @@
-import options, tables, strutils,parseutils, asyncdispatch, asyncnet, cgi, strformat
+import strformat, tables, json, strutils, asyncdispatch, asyncnet, strutils, parseutils, options, net, os
+from cgi import decodeUrl
+import mimetypes
+import base64
+
 type
   HttpVersion* = enum
     HttpVer11,
@@ -62,6 +66,28 @@ type
     staticDir: string
     sock: AsyncSocket
 
+  FormPart = object
+    name*: string
+    headers*: HttpHeaders
+    fileName*: string
+    body*: string
+  
+  FormMultiPart = object
+    parts*: Table[string, FormPart]
+
+proc newHttpHeaders*(): HttpHeaders
+
+proc initFormPart(): FormPart =
+  result.headers = newHttpHeaders()
+
+# proc `$`(this: FormPart): string =
+#   result = fmt"name: {this.name} filename: {this.fileName} headers: {this.headers} body: {this.body}"
+
+proc initFormMultiPart(): FormMultiPart =
+  result.parts = initTable[string, FormPart]()
+
+proc `$`(this: FormMultiPart): string =
+  return fmt"parts: {this.parts}"
 
 const
   Http100* = HttpCode(100)
@@ -277,7 +303,57 @@ proc httpMethodFrom(txt: string) : Option[HttpMethod] =
   else:
     result = none(HttpMethod)
 
+discard """
+一个解析的样例模板
+
+POST /t2/upload.do HTTP/1.1
+User-Agent: SOHUWapRebot
+Accept-Language: zh-cn,zh;q=0.5
+Accept-Charset: GBK,utf-8;q=0.7,*;q=0.7
+Connection: keep-alive
+Content-Length: 60408
+Content-Type:multipart/form-data; boundary=ZnGpDtePMx0KrHh_G0X99Yef9r8JZsRJSXC
+Host: w.sohu.com
+
+--ZnGpDtePMx0KrHh_G0X99Yef9r8JZsRJSXC
+Content-Disposition: form-data; name="city"
+
+Santa colo
+--ZnGpDtePMx0KrHh_G0X99Yef9r8JZsRJSXC
+Content-Disposition: form-data;name="desc"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+...
+--ZnGpDtePMx0KrHh_G0X99Yef9r8JZsRJSXC
+Content-Disposition: form-data;name="pic"; filename="photo.jpg"
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: binary
+
+... binary data of the jpg ...
+--ZnGpDtePMx0KrHh_G0X99Yef9r8JZsRJSXC--
+"""
+
 proc parseQueryParams(content: string): TableRef[string, string]
+
+proc parseFormData(r: var Request): FormMultiPart =
+  result = initFormMultiPart()
+  let contentType = r.headers.getOrDefault("content-type")[0]
+  let body = r.body
+  
+  if "form-urlencoded" in contentType.toLowerAscii():
+    let postBodyAsParams = parseQueryParams(body)
+    for k, v in postBodyAsParams.pairs:
+      r.queryParams.add(k, v)
+  elif contentType.startsWith("multipart/") and "boundary" in contentType:
+    var boundaryName = contentType[contentType.find("boundary=") + "boundary=".len .. ^1]
+    let formStart = fmt("--{boundaryName}")
+    let formEnd = fmt"--{boundaryName}--"
+
+    let formBody = body[body.find(formStart) .. body.find(formEnd)]
+    # for partString in formBody.split(formStart & "\c\l"):
+    #   var part = initFormPart()
+
 
 proc parseRequestFromConnection(s: ref Servy, conn: AsyncSocket): Future[Request] {.async.} =
   result.queryParams = newTable[string, string]()
@@ -324,6 +400,10 @@ proc parseRequestFromConnection(s: ref Servy, conn: AsyncSocket): Future[Request
     if kv.key.toLowerAscii == "content-length":
       contentLength = parseInt(kv.value[0])
     line = $(await conn.recvLine(maxLength = maxLine))
+  
+  if contentLength > 0:
+    result.body = await conn.recv(contentLength)
+  # result.formData = result.parseFormData()
 
 proc parseQueryParams(content: string): TableRef[string, string] =
   result = newTable[string, string]()
@@ -349,5 +429,24 @@ proc parseQueryParams(content: string): TableRef[string, string] =
     echo "contentLen:" & $content.len
 
 when isMainModule:
+  let a = """a
+  POST /post HTTP/1.1
+  Host: httpbin.org
+  Connection: keep-alive
+  Content-Length: 77
+  Cache-Control: max-age=0
+  Origin: https://httpbin.org
+  Upgrade-Insecure-Requests: 1
+  Content-Type: application/x-www-form-urlencoded
+  User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36
+  Sec-Fetch-User: ?1
+  Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3
+  Sec-Fetch-Site: same-origin
+  Sec-Fetch-Mode: navigate
+  Referer: https://httpbin.org/forms/post
+  Accept-Encoding: gzip, deflate, br
+  Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7
+  """
   echo parseHeader("Content-Type: text/html")
   echo parseQueryParams("/?a=1&b=22&aaa[]=asasdf&aaa[]=xxx&aaa[]=ddd").getOrDefault("aaa[]")
+  echo a.split("\n")
