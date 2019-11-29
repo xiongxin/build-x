@@ -12,5 +12,7 @@
 */
 
 Route::get('/', function () {
+    //dd(app('redis.connection'));
+
     return view('welcome');
 });
