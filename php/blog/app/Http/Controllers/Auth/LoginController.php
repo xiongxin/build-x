@@ -42,8 +42,4 @@ class LoginController extends Controller
     {
         return Auth::guard('web');
     }
-
-    public function username()
-    {
-    }
 }

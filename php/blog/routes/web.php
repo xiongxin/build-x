@@ -11,6 +11,12 @@
 |
 */
 
+use \App\Http\Resources\User as UserResource;
+use \App\Http\Resources\UserCollection;
+use \App\Http\Resources\PostCollection;
+use \App\User;
+
+
 Route::get('/', function () {
     //dd(app('redis.connection'));
 
@@ -20,4 +26,13 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/demo', 'DemoController@index');
+Route::get('/demo', 'DemoController@index');//->middleware(['auth', 'password.confirm']);
+Route::get('/users', function () {
+    return UserResource::collection(User::with('posts')->get());
+//    return new UserCollection(User::with('roles')->orderBy('id', 'desc')->paginate(1));
+});
+
+Route::get('/user/{id}', function (int $id) {
+//    dump(User::find($id)->posts);
+    return new PostCollection(User::find($id)->posts()->paginate(20));
+});
