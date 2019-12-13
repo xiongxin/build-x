@@ -1,2 +1,0 @@
-- *T   - pointer to exactly one item
-- [*]T - pointer to unkonown number of items
