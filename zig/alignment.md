@@ -137,12 +137,67 @@ and if you do, it gets assigned the same integer value.
 
 You can coerce an error from a subset to a superset:
 
+There is a shortcut for declaring an error set with only 1 value, and then getting that value:
+```
+const err = error.FileNotFound;
+```
+This is equivalent to:
+```
+const err = (error { FileNotFound }).FileNotFound;
+```
+This becomes useful when using inferred error sets.
+
 
 ### The Global Error Set
 
 ##  Error Union Type
 An error set type and normal type can be combined with the ! binary operator to form an error union
 type. You are likely to use an error union type more often than an error set type by itself:
+
+```
+const std = @import("std");
+const maxInt = std.math.maxInt;
+
+pub fn parseU64(buf: []const u8, radix: u8) !u64 {
+    var x: u64 = 0;
+
+    for (buf) |c| {
+        const digit = charToDigit(c);
+
+        if (digit >= radix) {
+            return error.InvalidChar;
+        }
+
+        // x *= radix
+        if (@mulWithOverflow(u64, x, radix, &x)) {
+            return error.Overflow;
+        }
+
+        // x += digit
+        if (@addWithOverflow(u64, x, digit, &x)) {
+            return error.Overflow;
+        }
+    }
+
+    return x;
+}
+
+fn charToDigit(c: u8) u8 {
+    return switch (c) {
+        '0' ... '9' => c - '0',
+        'A' ... 'Z' => c - 'A' + 10,
+        'a' ... 'z' => c - 'a' + 10,
+        else => maxInt(u8),
+    };
+}
+
+test "parse u64" {
+    const result = try parseU64("1234", 10);
+    std.debug.assert(result == 1234);
+}
+```
+Notice the return type is `!u64`. This means that the function either returns an unsigned 64 bit interger,
+or an error. We left off the error 
 
 ### catch
 if you want to provide a default value, you can use the catch binary operator:
