@@ -1,39 +1,20 @@
+const warn = std.debug.warn;
+const std  = @import("std");
+const os   = std.os;
+const assert = std.debug.assert;
+const mem  = std.mem;
+const ArrayList = std.ArrayList;
+const fmt = std.fmt;
+const maxInt = std.math.maxInt;
+
+
 pub fn main() void {
-  foo(12);
-}
+  warn("{} \n", .{@typeInfo(@TypeOf("abc"))});
+  warn("{} \n", .{@typeInfo(@TypeOf(12))});
 
-fn foo(x: i32) void {
-  if  (x >= 5) {
-    bar(); // 1
-  } else {
-    bang2();
-  }
-}
+  const a = 12;
+  warn("{} \n", .{@typeInfo(@TypeOf(&a))});
 
-fn bar() void {
-  if (baz()) { // 2
-    quux();
-  } else {
-    hello();
-  }
-}
-
-fn baz() bool {
-  return bang1(); // 3
-}
-
-fn quux() void {
-  bang2();
-}
-
-fn hello() void {
-  bang2(); // 6
-}
-
-fn bang1() bool {
-  return false;
-}
-
-fn bang2() void {
-  @panic("PermissionDenied");
+  const arr1 = [_]u8 { 81, 82, 83, 84};
+  warn("{} \n", .{ arr1[1 .. arr1.len] });
 }
