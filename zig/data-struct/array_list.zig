@@ -35,9 +35,9 @@ pub fn AlignedArrayList(comptime T: type, comptime alignment: ?u29) type {
     /// 去出初始化使用 `deinit` 或者 `toOwnedSlice`
     pub fn init(allocator: *Allocator) Self {
       return Self {
-        .items = &[_]T{},
+        .items = &[_]T{}, // 初始化空数组
         .len = 0,
-        .allocator = allocator,
+        .allocator = allocator, // 内存分配器
       };
     }
 
@@ -107,7 +107,7 @@ pub fn AlignedArrayList(comptime T: type, comptime alignment: ?u29) type {
     /// Insert `item` at index `n`. Moves `list[n .. list.len]`
     /// to make room.
     pub fn insert(self: *Self, n: usize, item: T) !void {
-      try ensureCapacity(self, self.items + 1);
+      try self.ensureCapacity(self.len + 1);
       self.len += 1;
       mem.copyBackwards(T, self.items[n + 1 .. self.len], self.items[n .. self.len - 1]);
       self.items[n] = item;
@@ -116,11 +116,11 @@ pub fn AlignedArrayList(comptime T: type, comptime alignment: ?u29) type {
     /// Insert slice `items` at index `n`.
     /// Moves `list[n .. list.len]` to make room.
     pub fn insertSlice(self: *Self, n: usize, items: SliceConst) !void {
-      try self.ensureCapacity(self, self.len + items.len);
+      try self.ensureCapacity(self.len + items.len);
       self.len += items.len;
 
       mem.copyBackwards(T, self.items[n + items.len .. self.len], self.items[n .. self.len - items.len]);
-      mem.copy(T, self.items[n .. n + item.len], items);
+      mem.copy(T, self.items[n .. n + items.len], items);
     }
 
     /// Extend the list by 1 element. Allocates more memory as necessary.
@@ -196,6 +196,7 @@ pub fn AlignedArrayList(comptime T: type, comptime alignment: ?u29) type {
         };
     }
 
+    /// remove last item
     pub fn pop(self: *Self) T {
       self.len -= 1;
       return self.items[self.len];
@@ -219,6 +220,7 @@ pub fn AlignedArrayList(comptime T: type, comptime alignment: ?u29) type {
       return result;
     }
 
+    /// 确保容量满足
     pub fn ensureCapacity(self: *Self, new_capacity: usize) !void {
       var better_capacity = self.capacity();
       if (better_capacity >= new_capacity) return;
