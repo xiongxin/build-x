@@ -36,21 +36,13 @@ public class App
             TagDAO tagDAO = session.getMapper(TagDAO.class);
 
             Tag tag = new Tag();
-            tag.setName("aaaaaa");
+            tag.setName("Python3");
             tag.setPid(1);
             tag.setCreated(new Date());
             tag.setUpdated(new Date());
 
-            InsertStatementProvider<Tag> insertStatementProvider =
-                    insert(tag).into(TagTableDynamicSqlSupport.tagTable)
-                    .map(TagTableDynamicSqlSupport.name).toProperty("name")
-                    .map(TagTableDynamicSqlSupport.pid).toProperty("pid")
-                    .map(TagTableDynamicSqlSupport.created).toProperty("created")
-                    .map(TagTableDynamicSqlSupport.updated).toProperty("updated")
-                    .build()
-                    .render(RenderingStrategies.MYBATIS3);
 
-            int rows = tagDAO.insert(insertStatementProvider);
+            int rows = tagDAO.insert(Tag.getInsertStatement(tag));
 
             System.out.println("args = " + rows);
         } catch (Exception e) {

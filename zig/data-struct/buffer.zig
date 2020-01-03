@@ -86,6 +86,10 @@ pub const Buffer = struct {
     return self;
   }
 
+  pub fn deinit(self: *Buffer) void {
+    self.list.deinit();
+  }
+
   pub fn toSlice(self: Buffer) [:0]u8 {
     return self.list.toSlice()[0..self.len() : 0];
   }
@@ -94,9 +98,10 @@ pub const Buffer = struct {
     return self.list.toSliceConst()[0..self.len() : 0];
   }
 
-  ///
-  pub fn deinit(self: *Buffer) void {
-    self.list.deinit();
+  pub fn shrink(self: *Buffer, new_len: usize) void {
+    assert(new_len <= self.len());
+    self.list.shrink(new_len + 1);
+    self.list.items[self.len()] = 0;
   }
 
   /// 扩充cap
@@ -113,5 +118,45 @@ pub const Buffer = struct {
 
   pub fn len(self: Buffer) usize {
     return self.list.len - 1;
+  }
+
+  pub fn capacity(self: Buffer) usize {
+    return if (self.list.items.len > 0)
+      self.list.items.len - 1
+    else
+      0;
+  }
+
+  pub fn append(self: *Buffer, m: []const u8) !void {
+    const old_len = self.len();
+    try self.resize(old_len + m.len);
+    mem.copy(u8, self.list.toSlice()[old_len..], m);
+  }
+
+  pub fn appendByte(self: *Buffer, byte: u8) !void {
+    const old_len = self.len();
+    try self.resize(old_len + 1);
+    self.list.toSlice()[old_len] = byte;
+  }
+
+  pub fn eql(self: Buffer, m: []const u8) bool {
+    return mem.eql(u8, self.toSliceConst(), m);
+  }
+
+  pub fn startsWith(self: Buffer, m: []const u8) bool {
+    if (self.len() < m.len) return false;
+    return mem.eql(u8, self.list.items[0..m.len], m);
+  }
+
+  pub fn endsWith(self: Buffer, m: []const u8) bool {
+    const l = self.len(); // 10
+    if (l < m.len) return false;
+    const start = l - m.len; // 10 - 4 = 6, 6 .. 10
+    return mem.eql(u8, self.list.items[start .. l], m);
+  }
+
+  pub fn replaceContents(self: *Buffer, m: []const u8) !void {
+    try self.resize(m.len);
+    mem.copy(u8, self.list.toSlice(), m);
   }
 };

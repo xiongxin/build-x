@@ -204,44 +204,82 @@ pub fn TailQueue(comptime T: type) type {
 
       list.len += 1;
     }
+
+    /// Insert a new node before an existing one.
+    ///
+    /// Arguments:
+    ///   node: Pointer to a node in the list.
+    ///   new_node: Pointer to the new node to insert.
+    pub fn insertBefore(list: *Self, node: *Node, new_node: *Node) void {
+      new_node.next = node;
+      if (node.prev) |prev_node| {
+        new_node.prev = prev_node;
+        prev_node.next = new_node;
+      } else {
+        // First element of the list.
+        new_node.prev = null;
+        list.first = new_node;
+      }
+
+      node.prev = new_node;
+      list.len += 1;
+    }
+
+    /// Insert a new node at the end of the list
+    ///
+    /// Arguments:
+    ///   new_node: Pointer to the new node to insert.
+    pub fn append(list: *Self, new_node: *Node) void {
+      if (list.last) |last| {
+        list.insertAfter(last, new_node);
+      } else {
+        // Empty list
+        list.prepend(new_node);
+      }
+    }
+
+    /// Insert a new node at the beginning of the list.
+    ///
+    /// Arguments
+    ///     new_node: Pointer to the new node to insert.
+    pub fn prepend(list: *Self, new_node: *Node) void {
+      if (list.first) |first| {
+        // Insert before first.
+        list.insertBefore(first, new_node);
+      } else {
+        // Empty list.
+        list.first = new_node;
+        list.last  = new_node;
+        new_node.prev = null;
+        new_node.next = null;
+
+        list.len = 1;
+      }
+    }
+
+    /// Remove a node from the list.
+    ///
+    /// Arguments:
+    ///     node: Pointer to the node to be remvoed.
+    pub fn remove(list: *Self, node: *Node) void {
+      if (node.prev) |prev_node| {
+        // Intermediate node.
+        prev_node.next = node.next;
+      } else {
+        // First element of the list.
+        list.first = node.next;
+      }
+
+      if (node.next) |next_node| {
+        // Intermediate node.
+        next_node.prev = node.prev;
+      } else {
+        // Last element of the list.
+        list.last = node.prev;
+      }
+
+      list.len -= 1;
+      assert(list.len == 0 or (list.first != null and list.last != null));
+    }
   };
-
-  /// Insert a new node before an existing one.
-  ///
-  /// Arguments:
-  ///   node: Pointer to a node in the list.
-  ///   new_node: Pointer to the new node to insert.
-  pub fn insertBefore(list: *Self, node: *Node, new_node: *Node) void {
-    new_node.next = node;
-    if (node.prev) |prev_node| {
-      new_node.prev = prev_node;
-      prev_node.next = new_node;
-    } else {
-      // First element of the list.
-      new_node.prev = null;
-      list.first = new_node;
-    }
-
-    node.prev = new_node;
-    list.len += 1;
-  }
-
-  /// Insert a new node at the end of the list
-  ///
-  /// Arguments:
-  ///   new_node: Pointer to the new node to insert.
-  pub fn append(list: *Self, new_node: *Node) void {
-    if (list.last) |last| {
-      list.insertAfter(last, new_node);
-    } else {
-      // Empty list
-      list.prepend(new_node);
-    }
-  }
-
-  /// Insert a new node at the beginning of the list.
-  ///
-  /// Arguments
-  ///     new_node: Pointer to the new node to insert.
-
 }
