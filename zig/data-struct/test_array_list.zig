@@ -9,13 +9,25 @@ const maxInt = std.math.maxInt;
 const testing = std.testing;
 
 pub fn main() !void {
-  var bytes: [1024]u8 = undefined;
   const allocator = std.heap.page_allocator;
 
   var list = try ArrayList(i32).initCapacity(allocator, 1024);
+  try list.insert(0, 1);
+  try list.insert(1, 2);
   defer list.deinit();
 
-  warn("list.len = {}, list.capacity = {}", .{ list.len, list.capacity() });
+  warn("list.len = {}, list.capacity = {} \n", .{ list.len, list.capacity() });
+
+  var slice = try allocator.alloc(i32, 8);
+  warn("slice = {} , slice.length = {} \n", .{slice, slice.len});
+  var l2 =  ArrayList(i32).fromOwnedSlice(allocator, slice);
+  try l2.insert(0, 1);
+  try l2.insert(0, 1);
+  warn("l2 = {}, items = {}, capacity={} \n", .{l2, l2.items.len,l2.capacity()});
+  for (l2.items) |i, idx| {
+    warn("{} = {} \t", .{idx, i});
+  }
+  warn("\n",.{});
 }
 
 test "std.ArrayList.basic" {
@@ -70,4 +82,6 @@ test "std.ArrayList.basic" {
   testing.expect(list.pop() == 33);
   testing.expect(mem.eql(u8, "abc",  &[_]u8 { 'a','b','c' }));
   // testing.expectEqual("abc", [_]u8 { 'a','b','c' });
+
+
 }
