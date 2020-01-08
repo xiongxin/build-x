@@ -195,13 +195,12 @@ pub fn TailQueue(comptime T: type) type {
       if (node.next) |next_node| {
         new_node.next = next_node;
         next_node.prev = new_node;
-      } else {
+      } else { // next节点为null时，即为尾节点
         new_node.next = null;
         list.last = new_node;
       }
 
       node.next = new_node;
-
       list.len += 1;
     }
 
@@ -223,6 +222,31 @@ pub fn TailQueue(comptime T: type) type {
 
       node.prev = new_node;
       list.len += 1;
+    }
+
+    /// Concatenate list2 onto the end of list1, removing all entries from the former.
+    ///
+    /// Arguments:
+    ///   list1: the list to concatenate onto
+    ///   list2: the list to be concatenated
+    pub fn concatByMoving(list1: *Self, list2: *Self) void {
+      const l2_first = list2.first orelse return;
+      if (list1.last) |l1_last| {
+        l1_last.next = list2.first;
+        l2_first.prev = list1.last;
+        list1.len += list2.len;
+      } else {
+        // list1 was empty
+        list1.first = list2.first;
+        list1.len = list2.len;
+      }
+
+      list1.last = list2.last;
+
+      // empty list2
+      list2.first = null;
+      list2.last = null;
+      list2.len = 0;
     }
 
     /// Insert a new node at the end of the list
@@ -247,7 +271,7 @@ pub fn TailQueue(comptime T: type) type {
         // Insert before first.
         list.insertBefore(first, new_node);
       } else {
-        // Empty list.
+        // Empty list. 空链表
         list.first = new_node;
         list.last  = new_node;
         new_node.prev = null;
@@ -280,6 +304,24 @@ pub fn TailQueue(comptime T: type) type {
 
       list.len -= 1;
       assert(list.len == 0 or (list.first != null and list.last != null));
+    }
+
+    /// Remove and return the last node in the list.
+    /// 
+    /// Returns:
+    ///   A pointer to the last node in the list.
+    pub fn pop(list: *Self) ?*Node {
+      const last = list.last orelse return null;
+      list.remove(last);
+      return last;
+    }
+
+    /// Remove and return the first node in the list
+    pub fn popFirst(list: *Self) ?*Node {
+      const first = list.first orelse return null;
+      list.remove(first);
+
+      return first;
     }
   };
 }

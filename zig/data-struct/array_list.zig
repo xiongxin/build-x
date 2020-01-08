@@ -99,7 +99,7 @@ pub fn AlignedArrayList(comptime T: type, comptime alignment: ?u29) type {
     /// 调用者获取返回的内存，ArrayList变成空
     pub fn toOwnedSlice(self: *Self) Slice {
       const allocator = self.allocator;
-      const result = allocator.shrink(self.items, self.len);
+      const result = allocator.shrink(self.items, self.len); // 返回老的 slice
       self.* = init(allocator);
       return result;
     }
@@ -213,6 +213,7 @@ pub fn AlignedArrayList(comptime T: type, comptime alignment: ?u29) type {
       return self.addOneAssumeCapacity();  // 返回最后一个位置的指针
     }
 
+    // 长度加一，容量不变
     pub fn addOneAssumeCapacity(self: *Self) *T {
       assert(self.len < self.capacity());
       const result = &self.items[self.len];
