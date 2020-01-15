@@ -3,4 +3,13 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xiongxin.app.dao.TagDAO">
+
+
+    <insert id="insert" parameterType="tag" useGeneratedKeys="true">
+        insert into tag (name, pid,fruit) values (#{name}, #{pid}, #{fruit})
+    </insert>
+
+    <select id="selectById" parameterType="integer" resultType="tag">
+        select * from tag where id = #{id}
+    </select>
 </mapper>

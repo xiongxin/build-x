@@ -12,6 +12,7 @@ import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 @Mapper
 public interface TagDAO {
 
-    @InsertProvider(type = SqlProviderAdapter.class, method = "insert")
-    int insert(InsertStatementProvider<Tag> insertStatement);
+    int insert(Tag tag);
+
+    Tag selectById(int id);
 }
