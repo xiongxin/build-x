@@ -18,9 +18,6 @@
         <package name="com.xiongxin.app.typeHandles"/>
         <!--        <typeHandler handler="com.xiongxin.app.typeHandles.ExampleTypeHandles" /> &lt;!&ndash;Example to string, string to Example&ndash;&gt;-->
     </typeHandlers>
-    <plugins>
-        <plugin interceptor="com.xiongxin.app.intercepts.ExamplePlugin" />
-    </plugins>
     <environments default="development">
         <environment id="development">
             <transactionManager type="JDBC"/>

@@ -73,8 +73,9 @@ pub const StreamingParser = struct {
   stack: u256, // 嵌套的object和map字面量 bit栈，最大嵌套255层
   stack_used: u8, // 已经使用的栈
 
-  const object_bit = 0;
-  const array_bit = 1;
+  // 和stack一起判断当前位置是否正确
+  const object_bit = 0;  // 对象标记位
+  const array_bit = 1;   // 数组标记位
   const max_stack_size = maxInt(u8);
 
   pub fn init()StreamingParser {
@@ -187,7 +188,7 @@ pub const StreamingParser = struct {
       _ = try p.transition(c, token2);
     }
   }
-
+  
   // Perform a single transition on the state machine and return any possible token.
   fn transition(p: *StreamingParser, c: u8, token: *?Token) Error!bool {
     switch (p.state) {
@@ -205,6 +206,14 @@ pub const StreamingParser = struct {
         else => {
           return error.InvalidTopLevel;
         }
+      },
+      .TopLevelEnd => switch (c) {
+        0x09, 0x0A, 0x0D, 0x20 => {
+              // whitespace
+        },
+        else => {
+          return error.InvalidTopLevelTrailing;
+        },
       },
       .ValueBegin => switch (c) {
         // Note: Theses are shared in ValueEnd as well, think we can reorder states to
@@ -247,7 +256,7 @@ pub const StreamingParser = struct {
           p.count = 0;
         },
         else => {
-          return error.InvalidTopLevel;
+          return error.InvalidValueBegin;
         }
       },
       .ValueEnd => switch (c) {

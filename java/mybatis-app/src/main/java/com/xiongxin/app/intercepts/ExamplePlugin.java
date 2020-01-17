@@ -11,7 +11,7 @@ import java.util.concurrent.Executor;
 
 @Intercepts({@Signature(
         type = Executor.class,
-        method = "insert",
+        method = "update",
         args = {MappedStatement.class, Object.class}
 )})
 public class ExamplePlugin implements Interceptor {

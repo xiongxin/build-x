@@ -6,10 +6,14 @@
 
 
     <insert id="insert" parameterType="tag" useGeneratedKeys="true">
-        insert into tag (name, pid,fruit) values (#{name}, #{pid}, #{fruit})
+        insert into tag (name, pid,fruit, example) values (#{name}, #{pid}, #{fruit}, #{example})
     </insert>
 
     <select id="selectById" parameterType="integer" resultType="tag">
         select * from tag where id = #{id}
     </select>
+
+    <update id="updateById" parameterType="integer">
+        update tag set pid = 1 where id = #{id}
+    </update>
 </mapper>

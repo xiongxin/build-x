@@ -16,7 +16,7 @@ public class ExampleTypeHandles extends BaseTypeHandler<Example> {
 
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, Example parameter, JdbcType jdbcType) throws SQLException {
-        ps.setString(i, parameter.getName());
+        ps.setString(i, parameter.getName() + " other something");
     }
 
     @Override

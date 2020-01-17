@@ -15,4 +15,6 @@ public interface TagDAO {
     int insert(Tag tag);
 
     Tag selectById(int id);
+
+    int updateById(int id);
 }

@@ -1,6 +1,7 @@
 package com.xiongxin.app;
 
 import com.xiongxin.app.dao.TagDAO;
+import com.xiongxin.app.domain.Example;
 import com.xiongxin.app.domain.Tag;
 import com.xiongxin.app.enums.Fruit;
 import com.xiongxin.app.table.TagTableDynamicSqlSupport;
@@ -42,12 +43,10 @@ public class App
 
         try (SqlSession session = sqlSessionFactory.openSession()) {
             TagDAO tagDAO = session.getMapper(TagDAO.class);
-
             Tag tag = tagDAO.selectById(25);
-
             tag.setFruit(Fruit.Banner);
-
-            System.out.println("tag = " + tag + ", id=" + tagDAO.insert(tag));
+            tag.setExample(new Example("dd"));
+            System.out.println("tag = " + tag + ", id=" + tagDAO.insert(tag) + ", update = " + tagDAO.updateById(25));
         } catch (Exception e) {
             e.printStackTrace();
         }

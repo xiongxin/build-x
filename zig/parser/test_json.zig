@@ -10,7 +10,7 @@ const testing = std.testing;
 
 pub fn main() !void {
   const input =
-    \\{"abc":122}
+    \\{"abc":{"abc":{"abc":{"abc":{"abc":{"abc":{"abc":122}}}}}}}
   ;
   var ts = TokenStream.init(input);
   warn("t = {} \n", .{try ts.next()});
