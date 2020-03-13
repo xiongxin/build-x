@@ -1,6 +1,7 @@
 package com.xiongxin.app.springsecuritydemo.config;
 
 
+import com.xiongxin.app.springsecuritydemo.interceptor.MyFilterSecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -12,11 +13,15 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+
+    @Autowired
+    private MyFilterSecurityInterceptor myFilterSecurityInterceptor;
 
     @Qualifier("userDetailsServiceImpl")
     @Autowired
@@ -42,7 +47,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
             .formLogin()
                 .loginPage("/login")
-                .successForwardUrl()
                 .defaultSuccessUrl("/welcome")
                 .failureUrl("/login?error")
                 .permitAll()
@@ -50,6 +54,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .logout()
                 .permitAll();
 
+        http.addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class);
     }
 
     @Bean
