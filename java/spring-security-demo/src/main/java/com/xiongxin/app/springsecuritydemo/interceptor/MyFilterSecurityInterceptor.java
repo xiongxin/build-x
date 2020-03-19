@@ -21,6 +21,7 @@ public class MyFilterSecurityInterceptor
     private FilterInvocationSecurityMetadataSource securityMetadataSource;
 
 
+    @Autowired
     @Override
     public void setAccessDecisionManager(AccessDecisionManager accessDecisionManager) {
         super.setAccessDecisionManager(accessDecisionManager);
@@ -35,6 +36,10 @@ public class MyFilterSecurityInterceptor
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         FilterInvocation filterInvocation = new FilterInvocation(servletRequest, servletResponse, filterChain);
 
+        invoke(filterInvocation);
+    }
+
+    private void invoke(FilterInvocation filterInvocation) throws IOException, ServletException {
         //fi里面有一个被拦截的url
         //里面调用MyInvocationSecurityMetadataSource的getAttributes(Object object)这个方法获取fi对应的所有权限
         //再调用MyAccessDecisionManager的decide方法来校验用户的权限是否足够

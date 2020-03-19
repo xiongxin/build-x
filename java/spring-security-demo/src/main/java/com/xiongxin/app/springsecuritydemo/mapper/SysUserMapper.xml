@@ -18,11 +18,14 @@
             <result column="name" property="name" />
         </collection>
     </resultMap>
+    <insert id="save">
+        insert sys_user  (username, password) values (#{username}, #{password})
+    </insert>
 
     <select id="findByUsername" resultMap="sysUserMap">
         select u.*
         ,r.name
-        from sys_User u
+        from sys_user u
         LEFT JOIN sys_role_user sru on u.id= sru.sys_user_id
         LEFT JOIN sys_role r on sru.sys_role_id=r.id
         where username= #{username}

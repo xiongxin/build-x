@@ -31,6 +31,6 @@ server:
     whitelabel:
       enabled: false
     include-exception: true
-  servlet:
-    session:
-      timeout: 1
+#  servlet:
+#    session:
+#      timeout: 1

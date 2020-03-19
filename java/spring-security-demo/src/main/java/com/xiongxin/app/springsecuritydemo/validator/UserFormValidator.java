@@ -12,9 +12,6 @@ import org.springframework.validation.Validator;
 @Component
 public class UserFormValidator implements Validator {
 
-    @Autowired
-    private UserService userService;
-
     @Override
     public boolean supports(Class<?> aClass) {
         return UserForm.class.equals(aClass);
@@ -29,9 +26,9 @@ public class UserFormValidator implements Validator {
             errors.rejectValue("username", "Size.userForm.username");
         }
 
-        if (userService.findByUsername(userForm.getUsername()) != null) {
-            errors.rejectValue("username", "Duplicate.userForm.username");
-        }
+//        if (userService.findByUsername(userForm.getUsername()) != null) {
+//            errors.rejectValue("username", "Duplicate.userForm.username");
+//        }
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "NotEmpty");
         if (userForm.getPassword().length() < 8 || userForm.getPassword().length() > 32) {

@@ -7,4 +7,7 @@
 <sec:authorize access="isAuthenticated()">
     Logout
 </sec:authorize>
+
+<a href=""></a>
+
 <h1>index page</h1>

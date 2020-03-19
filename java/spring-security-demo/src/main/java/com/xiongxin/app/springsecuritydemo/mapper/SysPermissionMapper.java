@@ -12,5 +12,5 @@ import java.util.List;
 public interface SysPermissionMapper {
 
     List<SysPermission> findAll();
-    List<SysPermission> findByAdminUserId( @Param("UserId") int userId);
+    List<SysPermission> findByAdminUserId( @Param("userId") int userId);
 }

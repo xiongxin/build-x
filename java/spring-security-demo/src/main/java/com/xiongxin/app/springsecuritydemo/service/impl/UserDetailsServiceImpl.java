@@ -37,12 +37,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         List<SysPermission> permissions = sysPermissionMapper.findByAdminUserId(user.getId());
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
 
+        // 添加当前用户的权限
         for (SysPermission permission : permissions) {
             if (permission != null && permission.getName() != null) {
                 grantedAuthorities.add(new SimpleGrantedAuthority(permission.getName()));
             }
         }
-
+        System.out.println(grantedAuthorities);
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),

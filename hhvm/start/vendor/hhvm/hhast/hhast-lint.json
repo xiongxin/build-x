@@ -1,0 +1,20 @@
+{
+  "roots": [ "src/", "codegen/", "tests/" ],
+  "builtinLinters": "all",
+  "overrides": [
+    {
+      "patterns": [ "codegen/*", "tests/examples/*" ],
+      "disabledLinters": [
+        "Facebook\\HHAST\\UnusedUseClauseLinter",
+        "Facebook\\HHAST\\LicenseHeaderLinter"
+      ],
+      "disableAllAutoFixes": true
+    },
+    {
+      "patterns": [ "src/__Private/Wrap/*" ],
+      "disabledLinters": [
+        "Facebook\\HHAST\\CamelCasedMethodsUnderscoredFunctionsLinter"
+      ]
+    }
+  ]
+}
