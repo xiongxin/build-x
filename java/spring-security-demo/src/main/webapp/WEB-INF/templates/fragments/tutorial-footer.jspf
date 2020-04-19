@@ -1,0 +1,10 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<hr>
+<footer>
+    <div class="uk-container">本站所有内容来自网络，如果有侵权请联系站长删除1781189926#qq.com(请用@替换#)</div>
+</footer>
+<script src="/dist/runtime.js"></script>
+<script src="/dist/tutorial.js"></script>
+</body>
+</html>

@@ -3,14 +3,29 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+    <properties>
+        <property name="org.apache.ibatis.parsing.PropertyParser.enable-default-value" value="true"/> <!-- 启用默认值特性 -->
+    </properties>
+    <settings>
+        <setting name="logImpl" value="SLF4J"/>
+    </settings>
+    <typeAliases>
+        <!--在任意使用完全限定名称的地方，都可以使用简写,直接使用类名 tag-->
+        <package name="com.xiongxin.app.domain"/>
+    </typeAliases>
+    <typeHandlers>
+        <typeHandler handler="org.apache.ibatis.type.EnumOrdinalTypeHandler" javaType="com.xiongxin.app.enums.Fruit" />
+        <package name="com.xiongxin.app.typeHandles"/>
+        <!--        <typeHandler handler="com.xiongxin.app.typeHandles.ExampleTypeHandles" /> &lt;!&ndash;Example to string, string to Example&ndash;&gt;-->
+    </typeHandlers>
     <environments default="development">
         <environment id="development">
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
-                <property name="driver" value="${driver}"/>
-                <property name="url" value="${url}"/>
-                <property name="username" value="${username}"/>
-                <property name="password" value="${password}"/>
+                <property name="driver" value="org.mariadb.jdbc.Driver"/>
+                <property name="url" value="jdbc:mariadb://localhost:3306/zkc"/>
+                <property name="username" value="${username:root}"/>
+                <property name="password" value="${password:root}"/>
             </dataSource>
         </environment>
     </environments>

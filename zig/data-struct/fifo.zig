@@ -38,6 +38,9 @@ pub fn LinearFifo(
 
     const Self = @This();
 
+    // Type of Self argument for slice operations.
+    // If buffer is inline(Static) then we need to ensure we haven't
+    // returnted a slice into a copy on the stack
     const SliceSelfArg = if (buffer_type == .Static) *Self else Self;
 
     usingnamespace switch (buffer_type) {
@@ -76,6 +79,12 @@ pub fn LinearFifo(
     pub fn deinit(self: Self) void {
       if (buffer_type == .Dynamic)
         self.allocator.free(self.buf);
+    }
+
+    pub fn realign(self: *Self) void {
+      if (self.buf.len - self.head >= self.count) {
+
+      }
     }
   };
 }

@@ -1,0 +1,20 @@
+{
+  "name": "facebook/hh-clilib",
+  "license": "MIT",
+  "extra": {
+    "branch-alias": {
+      "dev-master": "2.x-dev"
+    }
+  },
+  "require": {
+    "hhvm": "^4.13",
+    "hhvm/hsl": "^4.0",
+    "hhvm/type-assert": "^3.2",
+    "hhvm/hsl-experimental": "^4.0"
+  },
+  "require-dev": {
+    "hhvm/hhast": "^4.0.2",
+    "facebook/fbexpect": "^2.6.1",
+    "hhvm/hacktest": "^1.0.0"
+  }
+}

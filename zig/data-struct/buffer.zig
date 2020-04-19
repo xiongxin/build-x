@@ -160,3 +160,4 @@ pub const Buffer = struct {
     mem.copy(u8, self.list.toSlice(), m);
   }
 };
+};

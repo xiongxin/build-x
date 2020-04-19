@@ -21,5 +21,12 @@ pub fn main() void {
   q32.append(&n2);
   q32.append(&n3);
   q32.remove(&n1);
+
+  var q321 = QueueU32.init();
+  var m1 = QueueU32.Node.init(2);
+  q321.append(&m1);
+
+  q32.concatByMoving(&q321);
+
   warn("{}.\n", .{q32});
 }

@@ -1,6 +1,7 @@
 package com.xiongxin.app.domain;
 
 
+import com.xiongxin.app.enums.Fruit;
 import com.xiongxin.app.table.TagTableDynamicSqlSupport;
 import org.mybatis.dynamic.sql.SqlBuilder;
 import org.mybatis.dynamic.sql.insert.render.InsertStatementProvider;
@@ -16,6 +17,24 @@ public class Tag {
     private Integer pid;
     private Date created;
     private Date updated;
+    private Example example;
+    private Fruit fruit;
+
+    public Fruit getFruit() {
+        return fruit;
+    }
+
+    public void setFruit(Fruit fruit) {
+        this.fruit = fruit;
+    }
+
+    public Example getExample() {
+        return example;
+    }
+
+    public void setExample(Example example) {
+        this.example = example;
+    }
 
     public Date getCreated() {
         return created;
@@ -67,4 +86,15 @@ public class Tag {
                 .render(RenderingStrategies.MYBATIS3);
     }
 
+    @Override
+    public String toString() {
+        return "Tag{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", pid=" + pid +
+                ", created=" + created +
+                ", updated=" + updated +
+                ", example=" + example +
+                '}';
+    }
 }
