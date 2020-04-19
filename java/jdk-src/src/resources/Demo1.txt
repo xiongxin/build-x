@@ -1,0 +1,141 @@
+Classfile /home/xiongxin/Code/build-x/java/jdk-src/target/production/jdk-src/com/xiongxin/app/chapter1/Demo1.class
+  Last modified Jan 5, 2020; size 821 bytes
+  MD5 checksum 0f54c62b1fa2cfe888b351a8008262e3
+  Compiled from "Demo1.java"
+public class com.xiongxin.app.chapter1.Demo1
+  minor version: 0
+  major version: 52
+  flags: ACC_PUBLIC, ACC_SUPER
+Constant pool:
+   #1 = Methodref          #9.#36         // java/lang/Object."<init>":()V
+   #2 = Integer            44545
+   #3 = Integer            45451
+   #4 = Integer            425445
+   #5 = Integer            40000
+   #6 = Fieldref           #37.#38        // java/lang/System.out:Ljava/io/PrintStream;
+   #7 = Methodref          #39.#40        // java/io/PrintStream.println:(I)V
+   #8 = Class              #41            // com/xiongxin/app/chapter1/Demo1
+   #9 = Class              #42            // java/lang/Object
+  #10 = Utf8               <init>
+  #11 = Utf8               ()V
+  #12 = Utf8               Code
+  #13 = Utf8               LineNumberTable
+  #14 = Utf8               LocalVariableTable
+  #15 = Utf8               this
+  #16 = Utf8               Lcom/xiongxin/app/chapter1/Demo1;
+  #17 = Utf8               main
+  #18 = Utf8               ([Ljava/lang/String;)V
+  #19 = Utf8               args
+  #20 = Utf8               [Ljava/lang/String;
+  #21 = Utf8               x
+  #22 = Utf8               I
+  #23 = Utf8               y
+  #24 = Utf8               a
+  #25 = Utf8               b
+  #26 = Utf8               c
+  #27 = Utf8               d
+  #28 = Utf8               e
+  #29 = Utf8               f
+  #30 = Utf8               g
+  #31 = Utf8               i
+  #32 = Utf8               j
+  #33 = Utf8               k
+  #34 = Utf8               SourceFile
+  #35 = Utf8               Demo1.java
+  #36 = NameAndType        #10:#11        // "<init>":()V
+  #37 = Class              #43            // java/lang/System
+  #38 = NameAndType        #44:#45        // out:Ljava/io/PrintStream;
+  #39 = Class              #46            // java/io/PrintStream
+  #40 = NameAndType        #47:#48        // println:  (I)V
+  #41 = Utf8               com/xiongxin/app/chapter1/Demo1
+  #42 = Utf8               java/lang/Object
+  #43 = Utf8               java/lang/System
+  #44 = Utf8               out
+  #45 = Utf8               Ljava/io/PrintStream;
+  #46 = Utf8               java/io/PrintStream
+  #47 = Utf8               println
+  #48 = Utf8               (I)V
+{
+  public com.xiongxin.app.chapter1.Demo1();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=1, locals=1, args_size=1
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: return
+      LineNumberTable:
+        line 5: 0
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0       5     0  this   Lcom/xiongxin/app/chapter1/Demo1;
+
+  public static void main(java.lang.String[]);
+    descriptor: ([Ljava/lang/String;)V
+    flags: ACC_PUBLIC, ACC_STATIC
+    Code:
+      stack=3, locals=13, args_size=1
+         0: sipush        500
+         3: istore_1
+         4: bipush        100
+         6: istore_2
+         7: iload_1
+         8: iload_2
+         9: idiv
+        10: istore_3
+        11: bipush        50
+        13: istore        4
+        15: iconst_1
+        16: istore        5
+        18: iconst_2
+        19: istore        6
+        21: iconst_3
+        22: istore        7
+        24: iconst_4
+        25: istore        8
+        27: ldc           #2                  // int 44545
+        29: istore        9
+        31: ldc           #3                  // int 45451
+        33: istore        10
+        35: ldc           #4                  // int 425445
+        37: istore        11
+        39: ldc           #5                  // int 40000
+        41: istore        12
+        43: getstatic     #6                  // Field java/lang/System.out:Ljava/io/PrintStream;
+        46: iload_3
+        47: iload         4
+        49: iadd
+        50: invokevirtual #7                  // Method java/io/PrintStream.println:(I)V
+        53: return
+      LineNumberTable:
+        line 8: 0
+        line 9: 4
+        line 10: 7
+        line 11: 11
+        line 12: 15
+        line 13: 18
+        line 14: 21
+        line 15: 24
+        line 16: 27
+        line 17: 31
+        line 18: 35
+        line 19: 39
+        line 20: 43
+        line 21: 53
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0      54     0  args   [Ljava/lang/String;
+            4      50     1     x   I
+            7      47     2     y   I
+           11      43     3     a   I
+           15      39     4     b   I
+           18      36     5     c   I
+           21      33     6     d   I
+           24      30     7     e   I
+           27      27     8     f   I
+           31      23     9     g   I
+           35      19    10     i   I
+           39      15    11     j   I
+           43      11    12     k   I
+}
+SourceFile: "Demo1.java"
