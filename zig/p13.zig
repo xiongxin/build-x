@@ -18,4 +18,17 @@ pub fn main() !void {
   try file.outStream().stream.write("abcd");
   try file.seekTo(4);
   warn("{} \n", .{file.inStream().stream.readIntNative(i32)});
+
+  warn("array \ntype: {}\nvalue: {}\n", .{
+    getTrivialEqlFn(i32),
+    getTrivialEqlFn(i32)(1, 2),
+  });
+}
+
+pub fn getTrivialEqlFn(comptime K: type) (fn (K, K) bool) {
+  return struct {
+    fn eql(a: K, b: K) bool {
+      return a == b;
+    }
+  }.eql;
 }
