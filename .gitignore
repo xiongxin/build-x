@@ -19,7 +19,7 @@ target
 *.zip
 *.tar.gz
 *.rar
-zig/std/*.zig
-
+zig/std/
+zig/demo/zig-cache
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
