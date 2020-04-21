@@ -6,7 +6,7 @@ type
     actions*: string # 任务动作
     name*: string  # 任务名称
   Bake = ref object
-    tasksgraph* : Table[string, seq[string]] # 任务名称和他的依赖
+    tasksgraph* : Table[string, seq[string]] # 任务名称和他的依赖的任务名称
     tasks* : Table[string, Task] # 任务名称和任务对象
   NodeColor = enum
     ncWhite, ncGray, ncBlack
