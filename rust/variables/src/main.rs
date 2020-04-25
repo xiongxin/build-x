@@ -67,7 +67,29 @@ fn main() {
 
     let message = Write("abc".to_owned());
     message.call();
+
+    let c = Coin::Dime;
+    println!("c = {}", value_in_cents(c));
+    // println!("c = {}", value_in_cents(c));
 }
+
+
+enum Coin {
+    Peeny,
+    Nickel,
+    Dime,
+    Quarter,
+}
+
+fn value_in_cents(coin: Coin) -> u8 {
+    match coin {
+        Coin::Peeny => 1,
+        Coin::Nickel => 5,
+        Coin::Dime => 10,
+        Coin::Quarter => 25
+    }
+}
+
 
 fn change_word(s: &mut String) {
     s.pop();
