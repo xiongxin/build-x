@@ -1,5 +1,5 @@
 [package]
-name = "my-project"
+name = "myproject"
 version = "0.1.0"
 authors = ["xiongxin <1781189926@qq.com>"]
 edition = "2018"
