@@ -27,10 +27,16 @@ fn handle_connection(mut stream: TcpStream) {
         buffer = [0; 1024];
     }
     let str: String = String::from_utf8_lossy(&vec).to_owned().to_string();
-    println!("最终的请求数据: {}", str);
-    let contents = fs::read_to_string("hello.html").unwrap();
 
-    let response = format!("HTTP/1.1 200 OK\r\n\r\n{}", contents);
+    let (status_line, filename) = if str.starts_with("GET") {
+        ("HTTP/1.1 200 OK\r\n\r\n", "hello.html")
+    } else {
+        ("HTTP/1.1 404 NOT FOUND\r\n\r\n", "404.html")
+    };
+
+    let contents = fs::read_to_string(filename).unwrap();
+
+    let response = format!("{}{}", status_line, contents);
 
     if let Err(foo) = stream.write_all(response.as_bytes()) {
         println!("write_all error: {}", foo);
