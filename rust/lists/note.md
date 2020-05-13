@@ -120,3 +120,112 @@ struct Node {
 - &self： 一种共享引用，临时的分享获取一个value
 
 ## Push
+
+
+## Drop
+
+```rust
+pub trait Drop {
+  fn drop(&mut self);
+}
+```
+
+一般情况下如果包含的类型已经实现了Drop，都不需要你去实现Drop，并且也不需要调用drop方法。在我们
+的List中，所有的drop操作都是drop它的head，然后可能尝试drop`Box<Node>`。这些都是自动完成的，
+但是在我们这里有一个例外，自动drop会有问题。
+
+让我们考虑一个简单的列表：
+
+```
+list -> A -> B -> C
+```
+
+当list要被drop时，会尝试drop A，再Drop B，再 Drop C。这是一种递归代码，递归代码会出现爆栈的情况。
+尾递归可以重复利用函数栈，但是在这里并不是尾递归Drop。
+
+```rust
+impl Drop for List {
+    fn drop(&mut self) {
+        // NOTE: you can't actually explicitly call `drop` in real Rust code;
+        // we're pretending to be the compiler!
+        self.head.drop(); // tail recursive - good!
+    }
+}
+
+impl Drop for Link {
+    fn drop(&mut self) {
+        match *self {
+            Link::Empty => {} // Done!
+            Link::More(ref mut boxed_node) => {
+                boxed_node.drop(); // tail recursive - good!
+            }
+        }
+    }
+}
+
+impl Drop for Box<Node> {
+    fn drop(&mut self) {
+        self.ptr.drop(); // uh oh, not tail recursive!
+        deallocate(self.ptr);
+    }
+}
+
+impl Drop for Node {
+    fn drop(&mut self) {
+        self.next.drop();
+    }
+}
+```
+
+我们不能在deallocating之后drop Box的内容，所以没有尾递归的优化。所以必须实现迭代drop我们的数据。
+
+```
+impl Drop for List {
+    fn drop(&mut self) {
+        let mut cur_link = mem::replace(&mut self.head, Link::Empty);
+        // `while let` == "do this thing until this pattern doesn't match"
+        while let Link::More(mut boxed_node) = cur_link {
+            cur_link = mem::replace(&mut boxed_node.next, Link::Empty);
+            // boxed_node goes out of scope and gets dropped here;
+            // but its Node's `next` field has been set to Link::Empty
+            // so no unbounded recursion occurs.
+        }
+    }
+}
+```
+# An Ok Stack
+
+`Option`适合存储所有权，方便之后将所有权转移出去,例如: `Option<String>`
+
+## Peek
+
+```
+impl<T> Option<T> {
+    pub fn as_ref(&self) -> Option<&T>;
+}
+```
+
+```
+list.peek_mut().map(|&mut value| {
+    value = 42
+});
+```
+上面的代码使用模式匹配, `|&mut value|`意思为"参数是一个不可变引用，但是仅复制这个
+指针指向的值到value"，如果这里我们使用 `|value|`时，`value`的值将会变成`&mut i32`
+我们就可以修改这个`value`了。
+
+### IntoIter
+
+```
+pub trait Iterator {
+    type Item;
+    fn next(&mut self) -> Option<Self::Item>;
+}
+```
+
+Rust有3中不同的迭代需要实现：
+
+- IntoIter - `T`
+- IterMut - `&mut T`
+- Iter - `&T`
+

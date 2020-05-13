@@ -38,3 +38,40 @@ impl List {
     }
   }
 }
+
+impl Drop for List {
+  fn drop(&mut self) {
+    // 1. 如果 List 的 head 是 Link::Empty
+    // 2. 替换所有的 Link节点为 Link::Eempty
+    let mut cur_link = std::mem::replace(&mut self.head, Link::Empty);
+    // `while let` == "do this thing until this pattern doesn't match"
+    while let Link::More(mut boxed_node) = cur_link {
+        cur_link = std::mem::replace(&mut boxed_node.next, Link::Empty);
+        // boxed_node goes out of scope and gets dropped here;
+        // but its Node's `next` field has been set to Link::Empty
+        // so no unbounded recursion occurs.
+    }
+  }
+}
+
+#[cfg(test)]
+mod test {
+  use super::List;
+
+  #[test]
+  fn basics() {
+    let mut list = List::new();
+
+    assert_eq!(list.pop(), None);
+
+    // Populate list
+    list.push(1);
+    list.push(2);
+    list.push(3);
+
+    assert_eq!(list.pop(), Some(3));
+    assert_eq!(list.pop(), Some(2));
+    assert_eq!(list.pop(), Some(1));
+    assert_eq!(list.pop(), None);
+  }
+}
