@@ -225,7 +225,37 @@ pub trait Iterator {
 
 Rust有3中不同的迭代需要实现：
 
+实现思路
+通过自身的`pop()`来回去所有权
+通过Option的`as_ref`, `as_mut`，获取可变和不可变引用
+
 - IntoIter - `T`
 - IterMut - `&mut T`
 - Iter - `&T`
+
+# A Persistent Stack
+
+## Layout
+
+内存布局
+
+一个持久化链表需要维护一个tail。实际上的效果
+
+```
+list1 = A -> B -> C -> D
+list2 = tail(list1) = B -> C -> D
+list3 = push(list2, X) = X -> B -> C -> D
+```
+
+在内存中它们看起来是这样子的
+
+```
+list1 -> A ---+
+              |
+              v
+list2 ------> B -> C -> D
+              ^
+              |
+list3 -> X ---+
+```
 
