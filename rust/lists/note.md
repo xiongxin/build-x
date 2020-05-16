@@ -259,3 +259,14 @@ list2 ------> B -> C -> D
 list3 -> X ---+
 ```
 
+# A Bad but safe doubly-linked deque
+
+## Lyaout
+
+关键设计是`RefCell`内部可变性。核心的方法是：
+
+```rust
+fn borrow(&self) -> Ref<'_, T>;
+fn borrow_mut(&self) -> RefMut<'_, T>;
+```
+
