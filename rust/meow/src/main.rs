@@ -1,14 +1,10 @@
-use clap::{App, load_yaml};
+use clap::{load_yaml, App};
 use std::env;
 
-
-
 fn main() {
-
     let args: Vec<String> = env::args().collect();
 
     println!("{:?}", args);
-
 
     let yaml = load_yaml!("cli.yml");
     let m = App::from(yaml).get_matches();
