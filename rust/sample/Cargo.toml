@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+    "failure_demo",
+    "async_dmeo"
+]
