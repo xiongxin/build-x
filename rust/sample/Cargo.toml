@@ -2,5 +2,6 @@
 
 members = [
     "failure_demo",
-    "async_dmeo"
+    "async_dmeo",
+    "timer",
 ]
