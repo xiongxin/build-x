@@ -23,3 +23,19 @@ defimpl Size, for: Tuple do
 end
 ```
 
+Elxir中可以实现协议的类型：
+
+- Atom
+- BitString
+- Float
+- Function
+- Integer
+- List
+- Map
+- PID
+- Port
+- Reference
+- Tuple
+
+### Protocols and structs
+
