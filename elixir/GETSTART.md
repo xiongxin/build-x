@@ -10,6 +10,65 @@
 
 Links允许进程之间建立一种发生错误时的关系.经常会使用监视器连接进程,监视器会检测到一个进程死亡,并且自动开启一个新进程替换
 
+
+
+## 14 Module Attributes
+
+模块的主要作用：
+
+1. 注解模块，经常被用户或VM提供信息
+2. 常量
+3. 临时模块存储，在编译时使用
+
+最常用的模块属性:
+
+- `@moduledoc`
+- `@doc`
+- `@behaviour` OTP定义或者用户定义行为
+- `@before_compile`提供钩子在模块编译之前指向，可以编译之前注入函数进来
+
+
+
+### 常量
+
+```elixir
+defmodule MyApp.Notification do
+  @service Application.get_env(:my_app, :email_service)
+  @message Application.get_env(:my_app, :welcome_email)
+  def welcome(email), do: @service.send_welcome_message(email, @message)
+end
+```
+
+
+
+### 临时存储
+
+```elixir
+defmodule MyPlug do
+  use Plug.Builder
+
+  plug :set_header
+  plug :send_ok
+
+  def set_header(conn, _opts) do
+    put_resp_header(conn, "x-header", "set")
+  end
+
+  def send_ok(conn, _opts) do
+    send_resp(conn, 200, "ok")
+  end
+end
+
+IO.puts "Running MyPlug with Cowboy on http://localhost:4000"
+Plug.Adapters.Cowboy.http MyPlug, []
+```
+
+
+
+上面我们使用`plug/1`宏连接函数，当有一个web request进来时调用。在模块内部，每次调用`plug/1`，Plug库存储指定的参数到一个`@plugs`属性。在模块编译之前，Plug运行一个回调，定义函数(`call/2`)捕获HTTP request.这个函数将会按顺序运行内部的`@plugs`.
+
+
+
 ## 16 Protocols
 
 ### Example
