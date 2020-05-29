@@ -8,5 +8,5 @@ package com.xiongxin.app.expression;
  */
 public interface EvaluationContext {
 
-
+    TypeValue getRootObject();
 }
