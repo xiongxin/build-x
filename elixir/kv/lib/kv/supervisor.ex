@@ -11,7 +11,9 @@ defmodule KV.Supervisor do
   @impl true
   def init(:ok) do
     children = [
-      {KV.Registry, name: KV.Registry}
+      {KV.Registry, name: KV.Registry},
+      # 添加动态监视器
+      {DynamicSupervisor, name: KV.BucketSupervisor, strategy: :one_for_one}
     ]
 
     # 调用指定模块的 child_spec/1 方法

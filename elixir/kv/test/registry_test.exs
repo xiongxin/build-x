@@ -25,4 +25,12 @@ defmodule KV.RegistryTest do
     assert KV.Registry.lookup(registry, "shopping") == :error
   end
 
+
+  test "removes buckets on crash", %{registry: registry} do
+    KV.Registry.create(registry, "112")
+    {:ok, bucket} = KV.Registry.lookup(registry, "112")
+    Agent.stop(bucket, :shutdown) # 非自然停止
+    assert KV.Registry.lookup(registry, "112") == :error
+  end
+
 end

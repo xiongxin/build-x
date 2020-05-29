@@ -54,7 +54,8 @@ defmodule KV.Registry do
     if Map.has_key?(names, name) do
       {:noreply, {names, refs}}
     else
-      {:ok, bucket} = KV.Bucket.start_link([]) # 开启 Agent 对象
+      # 改成下面动态监视器创建进程 {:ok, bucket} = KV.Bucket.start_link([]) # 开启 Agent 对象
+      {:ok, bucket } = DynamicSupervisor.start_child(KV.BucketSupervisor, KV.Bucket)
       names = Map.put(names, name, bucket)
       ref = Process.monitor(bucket)
       refs  = Map.put(refs, ref, name)
@@ -62,10 +63,13 @@ defmodule KV.Registry do
     end
   end
 
+  # 使用动态监视器时,也会收到下线的消息
+  # 当进程异常关闭时, 监听当前进程,会收到正常下线消息
   @impl true
-  def handle_info({:DOWN, ref, :process, _pid, _reason}, {names, refs}) do
+  def handle_info({:DOWN, ref, :process, pid, _reason}, {names, refs}) do
     # 异步返回值 {:noreply, new_state}
     { name, refs } = Map.pop(refs, ref)
+    IO.puts("回调的名称 #{name}")
     names = Map.delete(names, name)
 
     {:noreply, { names, refs } }
