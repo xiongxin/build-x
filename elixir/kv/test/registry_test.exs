@@ -1,11 +1,11 @@
 defmodule KV.RegistryTest do
   use ExUnit.Case, async: true
 
-  setup do
+  setup context do
     # start_supervised!/1 调用它的start_link/1方法
     # 用于保证在每个请求之前关闭
-    registry = start_supervised!(KV.Registry)
-    %{registry: registry}
+    _ = start_supervised!({KV.Registry, name: context.test})
+    %{registry: context.test}
   end
 
   test "spawns buckets", %{registry: registry} do
