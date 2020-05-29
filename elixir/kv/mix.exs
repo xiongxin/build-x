@@ -14,7 +14,10 @@ defmodule KV.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger],
+      # 指定应用回调模块, 参数可以传递给应用启动时
+      # Application 可以回调任何实现 Application behaviour的模块
+      mod: {KV, []}
     ]
   end
 
