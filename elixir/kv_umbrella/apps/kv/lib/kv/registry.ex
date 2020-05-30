@@ -21,10 +21,8 @@ defmodule KV.Registry do
   def lookup(server, name) do
     case :ets.lookup(server, name) do
       [{^name, pid}] ->
-        IO.puts("创建name #{name} #{inspect server}")
         {:ok, pid}
       [] ->
-        IO.puts("创建name #{name} #{inspect server}")
         :error
     end
   end
@@ -47,7 +45,6 @@ defmodule KV.Registry do
     # 3. 将names map 存放到 ETS 表中
     names = :ets.new(table, [ :named_table, read_concurrency: true ])
     refs = %{}
-    IO.puts("创建name #{inspect names}")
     {:ok, {names, refs}} # 当前注册保存一个map对象
   end
 

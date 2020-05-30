@@ -1,3 +1,4 @@
+# 一个保存键值对的进程,可以多进程之间共享数据
 defmodule KV.Bucket do
   use Agent, restart: :temporary
 
