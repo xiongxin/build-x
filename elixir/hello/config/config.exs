@@ -7,6 +7,8 @@
 # General application configuration
 use Mix.Config
 
+config :hello, HelloWeb.Gettext, default_locale: "fr", locales: ~w(en fr)
+
 config :hello,
   ecto_repos: [Hello.Repo]
 

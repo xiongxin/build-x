@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: aa
+
+
+datasource:
+  db:
+    username: root
+    password: root
+    url: jdbc:mariadb://localhost:3306/test
+    driver: org.mariadb.jdbc.Driver

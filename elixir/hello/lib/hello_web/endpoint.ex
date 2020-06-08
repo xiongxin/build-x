@@ -51,7 +51,7 @@ defmodule HelloWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
 
-  plug HelloWeb.Plugs.Locale, "en"
+  # plug HelloWeb.Plugs.Locale, "en"
   plug :instrospect
   plug HelloWeb.Router
 
