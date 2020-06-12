@@ -1,0 +1,266 @@
+Classfile /home/xiongxin/Code/build-x/java/spel/target/classes/com/xiongxin/app/asm/X.class
+  Last modified Jun 4, 2020; size 1320 bytes
+  MD5 checksum 6bb6d953979c108e8ca45a7922a20d30
+  Compiled from "X.java"
+public class com.xiongxin.app.asm.X extends com.xiongxin.app.asm.P00
+  minor version: 0
+  major version: 52
+  flags: ACC_PUBLIC, ACC_SUPER
+Constant pool:
+   #1 = Methodref          #21.#51        // com/xiongxin/app/asm/P00."<init>":()V
+   #2 = Class              #52            // java/lang/String
+   #3 = Fieldref           #11.#53        // com/xiongxin/app/asm/X.abc:[Ljava/lang/String;
+   #4 = Long               11111111111l
+   #6 = Fieldref           #11.#54        // com/xiongxin/app/asm/X.x:J
+   #7 = Fieldref           #55.#56        // java/lang/System.out:Ljava/io/PrintStream;
+   #8 = Methodref          #57.#58        // java/io/PrintStream.println:(I)V
+   #9 = Long               22222222222222222l
+  #11 = Class              #59            // com/xiongxin/app/asm/X
+  #12 = Long               7787812312414214l
+  #14 = String             #24            // abc
+  #15 = Methodref          #11.#60        // com/xiongxin/app/asm/X."<init>":(J[Ljava/lang/String;I)V
+  #16 = Long               100l
+  #18 = Fieldref           #11.#61        // com/xiongxin/app/asm/X.string:Ljava/lang/String;
+  #19 = String             #62            // clint
+  #20 = Methodref          #57.#63        // java/io/PrintStream.println:(Ljava/lang/String;)V
+  #21 = Class              #64            // com/xiongxin/app/asm/P00
+  #22 = Utf8               string
+  #23 = Utf8               Ljava/lang/String;
+  #24 = Utf8               abc
+  #25 = Utf8               [Ljava/lang/String;
+  #26 = Utf8               x
+  #27 = Utf8               J
+  #28 = Utf8               <init>
+  #29 = Utf8               (J[Ljava/lang/String;I)V
+  #30 = Utf8               Code
+  #31 = Utf8               LineNumberTable
+  #32 = Utf8               LocalVariableTable
+  #33 = Utf8               this
+  #34 = Utf8               Lcom/xiongxin/app/asm/X;
+  #35 = Utf8               y
+  #36 = Utf8               I
+  #37 = Utf8               ([Ljava/lang/String;)V
+  #38 = Utf8               (I)V
+  #39 = Utf8               main
+  #40 = Utf8               args
+  #41 = Utf8               a
+  #42 = Utf8               b
+  #43 = Utf8               c
+  #44 = Utf8               d
+  #45 = Utf8               e
+  #46 = Utf8               f
+  #47 = Utf8               <clinit>
+  #48 = Utf8               ()V
+  #49 = Utf8               SourceFile
+  #50 = Utf8               X.java
+  #51 = NameAndType        #28:#48        // "<init>":()V
+  #52 = Utf8               java/lang/String
+  #53 = NameAndType        #24:#25        // abc:[Ljava/lang/String;
+  #54 = NameAndType        #26:#27        // x:J
+  #55 = Class              #65            // java/lang/System
+  #56 = NameAndType        #66:#67        // out:Ljava/io/PrintStream;
+  #57 = Class              #68            // java/io/PrintStream
+  #58 = NameAndType        #69:#38        // println:(I)V
+  #59 = Utf8               com/xiongxin/app/asm/X
+  #60 = NameAndType        #28:#29        // "<init>":(J[Ljava/lang/String;I)V
+  #61 = NameAndType        #22:#23        // string:Ljava/lang/String;
+  #62 = Utf8               clint
+  #63 = NameAndType        #69:#70        // println:(Ljava/lang/String;)V
+  #64 = Utf8               com/xiongxin/app/asm/P00
+  #65 = Utf8               java/lang/System
+  #66 = Utf8               out
+  #67 = Utf8               Ljava/io/PrintStream;
+  #68 = Utf8               java/io/PrintStream
+  #69 = Utf8               println
+  #70 = Utf8               (Ljava/lang/String;)V
+{
+  static java.lang.String string;
+    descriptor: Ljava/lang/String;
+    flags: ACC_STATIC
+
+  private java.lang.String[] abc;
+    descriptor: [Ljava/lang/String;
+    flags: ACC_PRIVATE
+
+  private long x;
+    descriptor: J
+    flags: ACC_PRIVATE
+
+  public com.xiongxin.app.asm.X(long, java.lang.String[], int);
+    descriptor: (J[Ljava/lang/String;I)V
+    flags: ACC_PUBLIC
+    Code:
+      stack=3, locals=5, args_size=4
+         0: aload_0
+         1: invokespecial #1                  // Method com/xiongxin/app/asm/P00."<init>":()V
+         4: aload_0
+         5: iconst_0
+         6: anewarray     #2                  // class java/lang/String
+         9: putfield      #3                  // Field abc:[Ljava/lang/String;
+        12: aload_0
+        13: ldc2_w        #4                  // long 11111111111l
+        16: putfield      #6                  // Field x:J
+        19: aload_0
+        20: aload_3
+        21: putfield      #3                  // Field abc:[Ljava/lang/String;
+        24: aload_0
+        25: lload_1
+        26: putfield      #6                  // Field x:J
+        29: getstatic     #7                  // Field java/lang/System.out:Ljava/io/PrintStream;
+        32: iload         4
+        34: invokevirtual #8                  // Method java/io/PrintStream.println:(I)V
+        37: return
+      LineNumberTable:
+        line 10: 0
+         line 6: 4
+        line 8: 12
+        line 11: 19
+        line 12: 24
+        line 13: 29
+        line 14: 37
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0      38     0  this   Lcom/xiongxin/app/asm/X;
+            0      38     1     x   J
+            0      38     3   abc   [Ljava/lang/String;
+            0      38     4     y   I
+
+  public com.xiongxin.app.asm.X(java.lang.String[]);
+    descriptor: ([Ljava/lang/String;)V
+    flags: ACC_PUBLIC
+    Code:
+      stack=3, locals=2, args_size=2
+         0: aload_0
+         1: invokespecial #1                  // Method com/xiongxin/app/asm/P00."<init>":()V
+         4: aload_0
+         5: iconst_0
+         6: anewarray     #2                  // class java/lang/String
+         9: putfield      #3                  // Field abc:[Ljava/lang/String;
+        12: aload_0
+        13: ldc2_w        #4                  // long 11111111111l
+        16: putfield      #6                  // Field x:J
+        19: aload_0
+        20: aload_1
+        21: putfield      #3                  // Field abc:[Ljava/lang/String;
+        24: aload_0
+        25: ldc2_w        #9                  // long 22222222222222222l
+        28: putfield      #6                  // Field x:J
+        31: return
+      LineNumberTable:
+        line 16: 0
+        line 6: 4
+        line 8: 12
+        line 17: 19
+        line 18: 24
+        line 19: 31
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0      32     0  this   Lcom/xiongxin/app/asm/X;
+            0      32     1   abc   [Ljava/lang/String;
+
+  public com.xiongxin.app.asm.X(int);
+    descriptor: (I)V
+    flags: ACC_PUBLIC
+    Code:
+      stack=3, locals=2, args_size=2
+         0: aload_0
+         1: invokespecial #1                  // Method com/xiongxin/app/asm/P00."<init>":()V
+         4: aload_0
+         5: iconst_0
+         6: anewarray     #2                  // class java/lang/String
+         9: putfield      #3                  // Field abc:[Ljava/lang/String;
+        12: aload_0
+        13: ldc2_w        #4                  // long 11111111111l
+        16: putfield      #6                  // Field x:J
+        19: aload_0
+        20: iload_1
+        21: i2l
+        22: putfield      #6                  // Field x:J
+        25: return
+      LineNumberTable:
+        line 21: 0
+        line 6: 4
+        line 8: 12
+        line 22: 19
+        line 23: 25
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0      26     0  this   Lcom/xiongxin/app/asm/X;
+            0      26     1     x   I
+
+  public static void main(java.lang.String[]);
+    descriptor: ([Ljava/lang/String;)V
+    flags: ACC_PUBLIC, ACC_STATIC
+    Code:
+      stack=8, locals=10, args_size=1
+         0: new           #11                 // class com/xiongxin/app/asm/X
+         3: dup
+         4: ldc2_w        #12                 // long 7787812312414214l
+         7: iconst_1
+         8: anewarray     #2                  // class java/lang/String
+        11: dup
+        12: iconst_0
+        13: ldc           #14                 // String abc
+        15: aastore
+        16: bipush        11
+        18: invokespecial #15                 // Method "<init>":(J[Ljava/lang/String;I)V
+        21: astore_1
+        22: iconst_1
+        23: istore_2
+        24: iconst_4
+        25: istore_3
+        26: iload_2
+        27: iload_3
+        28: isub
+        29: istore        4
+        31: iload_2
+        32: iload_3
+        33: ishr
+        34: istore        5
+        36: ldc2_w        #16                 // long 100l
+        39: lstore        6
+        41: lconst_1
+        42: lstore        8
+        44: lload         8
+        46: lload         6
+        48: ladd
+        49: lstore        8
+        51: return
+      LineNumberTable:
+        line 30: 0
+        line 31: 22
+        line 32: 24
+        line 33: 26
+        line 34: 31
+        line 35: 36
+        line 36: 41
+        line 37: 44
+        line 38: 51
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0      52     0  args   [Ljava/lang/String;
+           22      30     1     x   Lcom/xiongxin/app/asm/X;
+           24      28     2     a   I
+           26      26     3     b   I
+           31      21     4     c   I
+           36      16     5     d   I
+           41      11     6     e   J
+           44       8     8     f   J
+
+  static {};
+    descriptor: ()V
+    flags: ACC_STATIC
+    Code:
+      stack=2, locals=0, args_size=0
+         0: ldc           #14                 // String abc
+         2: putstatic     #18                 // Field string:Ljava/lang/String;
+         5: getstatic     #7                  // Field java/lang/System.out:Ljava/io/PrintStream;
+         8: ldc           #19                 // String clint
+        10: invokevirtual #20                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+        13: return
+      LineNumberTable:
+        line 5: 0
+        line 26: 5
+        line 27: 13
+}
+SourceFile: "X.java"

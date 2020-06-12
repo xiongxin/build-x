@@ -1,0 +1,251 @@
+Classfile /home/xiongxin/Code/build-x/java/spel/target/classes/com/xiongxin/app/P00.class
+  Last modified Jun 10, 2020; size 1344 bytes
+  MD5 checksum 8e712537c77874da844174b9b0d0aabd
+  Compiled from "P00.java"
+public class com.xiongxin.app.P00
+  minor version: 0
+  major version: 52
+  flags: ACC_PUBLIC, ACC_SUPER
+Constant pool:
+   #1 = Methodref          #15.#50        // java/lang/Object."<init>":()V
+   #2 = Fieldref           #11.#51        // com/xiongxin/app/P00.i:I
+   #3 = String             #52            // abc
+   #4 = Fieldref           #11.#53        // com/xiongxin/app/P00.a:Ljava/lang/String;
+   #5 = Methodref          #11.#54        // com/xiongxin/app/P00.tryFinally:()V
+   #6 = Fieldref           #55.#56        // java/lang/System.out:Ljava/io/PrintStream;
+   #7 = String             #57            // finally最先执行
+   #8 = Methodref          #58.#59        // java/io/PrintStream.println:(Ljava/lang/String;)V
+   #9 = Class              #60            // java/lang/Exception
+  #10 = String             #61            // 捕获到异常
+  #11 = Class              #62            // com/xiongxin/app/P00
+  #12 = Methodref          #11.#50        // com/xiongxin/app/P00."<init>":()V
+  #13 = String             #18            // a
+  #14 = Class              #47            // "[[[I"
+  #15 = Class              #63            // java/lang/Object
+  #16 = Utf8               i
+  #17 = Utf8               I
+  #18 = Utf8               a
+  #19 = Utf8               Ljava/lang/String;
+  #20 = Utf8               <init>
+  #21 = Utf8               ()V
+  #22 = Utf8               Code
+  #23 = Utf8               LineNumberTable
+  #24 = Utf8               LocalVariableTable
+  #25 = Utf8               this
+  #26 = Utf8               Lcom/xiongxin/app/P00;
+  #27 = Utf8               main
+  #28 = Utf8               ([Ljava/lang/String;)V
+  #29 = Utf8               args
+  #30 = Utf8               [Ljava/lang/String;
+  #31 = Utf8               tryFinally
+  #32 = Utf8               b
+  #33 = Utf8               e
+  #34 = Utf8               Ljava/lang/Exception;
+  #35 = Utf8               StackMapTable
+  #36 = Class              #60            // java/lang/Exception
+  #37 = Class              #64            // java/lang/Throwable
+  #38 = Utf8               createBuffer
+  #39 = Utf8               buffer
+  #40 = Utf8               [I
+  #41 = Utf8               bufsz
+  #42 = Utf8               value
+  #43 = Utf8               p00
+  #44 = Utf8               create3DArray
+  #45 = Utf8               ()[[[I
+  #46 = Utf8               grid
+  #47 = Utf8               [[[I
+  #48 = Utf8               SourceFile
+  #49 = Utf8               P00.java
+  #50 = NameAndType        #20:#21        // "<init>":()V
+  #51 = NameAndType        #16:#17        // i:I
+  #52 = Utf8               abc
+  #53 = NameAndType        #18:#19        // a:Ljava/lang/String;
+  #54 = NameAndType        #31:#21        // tryFinally:()V
+  #55 = Class              #65            // java/lang/System
+  #56 = NameAndType        #66:#67        // out:Ljava/io/PrintStream;
+  #57 = Utf8               finally最先执行
+  #58 = Class              #68            // java/io/PrintStream
+  #59 = NameAndType        #69:#70        // println:(Ljava/lang/String;)V
+  #60 = Utf8               java/lang/Exception
+  #61 = Utf8               捕获到异常
+  #62 = Utf8               com/xiongxin/app/P00
+  #63 = Utf8               java/lang/Object
+  #64 = Utf8               java/lang/Throwable
+  #65 = Utf8               java/lang/System
+  #66 = Utf8               out
+  #67 = Utf8               Ljava/io/PrintStream;
+  #68 = Utf8               java/io/PrintStream
+  #69 = Utf8               println
+  #70 = Utf8               (Ljava/lang/String;)V
+{
+  private int i;
+    descriptor: I
+    flags: ACC_PRIVATE
+
+  private java.lang.String a;
+    descriptor: Ljava/lang/String;
+    flags: ACC_PRIVATE
+
+  public com.xiongxin.app.P00();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=2, locals=1, args_size=1
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: aload_0
+         5: iconst_1
+         6: putfield      #2                  // Field i:I
+         9: aload_0
+        10: ldc           #3                  // String abc
+        12: putfield      #4                  // Field a:Ljava/lang/String;
+        15: return
+      LineNumberTable:
+        line 3: 0
+        line 5: 4
+        line 6: 9
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0      16     0  this   Lcom/xiongxin/app/P00;
+
+  public static void main(java.lang.String[]);
+    descriptor: ([Ljava/lang/String;)V
+    flags: ACC_PUBLIC, ACC_STATIC
+    Code:
+      stack=0, locals=1, args_size=1
+         0: invokestatic  #5                  // Method tryFinally:()V
+         3: return
+      LineNumberTable:
+        line 9: 0
+        line 10: 3
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0       4     0  args   [Ljava/lang/String;
+
+  static void tryFinally();
+    descriptor: ()V
+    flags: ACC_STATIC
+    Code:
+      stack=2, locals=4, args_size=0
+         0: iconst_1
+         1: istore_0
+         2: iconst_0
+         3: istore_1
+         4: iload_0
+         5: iload_1
+         6: idiv
+         7: istore_2
+         8: getstatic     #6                  // Field java/lang/System.out:Ljava/io/PrintStream;
+        11: ldc           #7                  // String finally最先执行
+        13: invokevirtual #8                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+        16: goto          50
+        19: astore_0
+        20: getstatic     #6                  // Field java/lang/System.out:Ljava/io/PrintStream;
+        23: ldc           #10                 // String 捕获到异常
+        25: invokevirtual #8                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+        28: getstatic     #6                  // Field java/lang/System.out:Ljava/io/PrintStream;
+        31: ldc           #7                  // String finally最先执行
+        33: invokevirtual #8                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+        36: goto          50
+        39: astore_3
+        40: getstatic     #6                  // Field java/lang/System.out:Ljava/io/PrintStream;
+        43: ldc           #7                  // String finally最先执行
+        45: invokevirtual #8                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+        48: aload_3
+        49: athrow
+        50: return
+      Exception table:
+         from    to  target type
+             0     8    19   Class java/lang/Exception
+             0     8    39   any
+            19    28    39   any
+      LineNumberTable:
+        line 15: 0
+        line 16: 2
+        line 17: 4
+        line 21: 8
+        line 22: 16
+        line 18: 19
+        line 19: 20
+        line 21: 28
+        line 22: 36
+        line 21: 39
+        line 22: 48
+        line 23: 50
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            2       6     0     a   I
+            4       4     1     b   I
+           20       8     0     e   Ljava/lang/Exception;
+      StackMapTable: number_of_entries = 3
+        frame_type = 83 /* same_locals_1_stack_item */
+          stack = [ class java/lang/Exception ]
+        frame_type = 83 /* same_locals_1_stack_item */
+          stack = [ class java/lang/Throwable ]
+        frame_type = 10 /* same */
+
+  void createBuffer();
+    descriptor: ()V
+    flags:
+    Code:
+      stack=3, locals=5, args_size=1
+         0: bipush        100
+         2: istore_2
+         3: bipush        12
+         5: istore_3
+         6: iload_2
+         7: newarray       int
+         9: astore_1
+        10: aload_1
+        11: bipush        10
+        13: iload_3
+        14: iastore
+        15: aload_1
+        16: bipush        11
+        18: iaload
+        19: istore_3
+        20: new           #11                 // class com/xiongxin/app/P00
+        23: dup
+        24: invokespecial #12                 // Method "<init>":()V
+        27: astore        4
+        29: aload_0
+        30: ldc           #13                 // String a
+        32: putfield      #4                  // Field a:Ljava/lang/String;
+        35: return
+      LineNumberTable:
+        line 27: 0
+        line 28: 3
+        line 29: 6
+        line 30: 10
+        line 31: 15
+        line 33: 20
+        line 34: 29
+        line 35: 35
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0      36     0  this   Lcom/xiongxin/app/P00;
+           10      26     1 buffer   [I
+            3      33     2 bufsz   I
+            6      30     3 value   I
+           29       7     4   p00   Lcom/xiongxin/app/P00;
+
+  int[][][] create3DArray();
+    descriptor: ()[[[I
+    flags:
+    Code:
+      stack=2, locals=2, args_size=1
+         0: bipush        10
+         2: iconst_5
+         3: multianewarray #14,  2            // class "[[[I"
+         7: astore_1
+         8: aload_1
+         9: areturn
+      LineNumberTable:
+        line 39: 0
+        line 40: 8
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0      10     0  this   Lcom/xiongxin/app/P00;
+            8       2     1  grid   [[[I
+}
+SourceFile: "P00.java"
