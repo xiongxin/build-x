@@ -1,7 +1,0 @@
-{
-  "hack.hhastPath": "bin/hhast-lint",
-  "hack.useHhast": true,
-  "files.associations": {
-    "*.php": "hack"
-  }
-}
