@@ -1,5 +1,0 @@
-vendor/
-*.hhast.parser-cache
-*.swp
-*~
-composer.lock
