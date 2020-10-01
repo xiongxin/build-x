@@ -1,5 +1,0 @@
-*.swp
-vendor/
-*.orig
-composer.lock
-.*.hhast.*cache
