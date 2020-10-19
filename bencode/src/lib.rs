@@ -120,16 +120,22 @@ pub enum BencodeError {
   DecoderErr(String),
 
   #[error("数值解析错误")]
-  DecodeParseError(#[from] ParseIntError),
+  DecodeParseIntError(#[from] ParseIntError),
 }
 
+use std::iter::Peekable;
+
 impl Decoder {
+  pub fn new() -> Decoder {
+    Decoder {}
+  }
+
   pub fn decode(&self, bt: &str) -> Result<BencodeType, BencodeError> {
-    let mut chars = bt.chars();
+    let mut chars = bt.chars().peekable();
     self.decode_chars(&mut chars)
   }
 
-  fn decode_chars(&self, chars: &mut Chars) -> Result<BencodeType, BencodeError> {
+  fn decode_chars(&self, chars: &mut Peekable<Chars>) -> Result<BencodeType, BencodeError> {
     match chars
       .next()
       .ok_or(BencodeError::DecoderErr(format!("解析字符不能为空")))?
@@ -138,8 +144,14 @@ impl Decoder {
       'l' => self.decode_list(chars),
       'd' => self.decode_dict(chars),
       c => {
+        println!("c = {}", c);
         if c.is_ascii_digit() {
-          self.decode_str(chars, c.to_digit(10).unwrap())
+          chars.next(); // eat :
+          self.decode_str(
+            chars,
+            c.to_digit(10)
+              .ok_or(BencodeError::DecoderErr(format!("字符串长度数值解析错误")))?,
+          )
         } else {
           Err(BencodeError::DecoderErr(format!("无效起始字符串: {}", c)))
         }
@@ -147,7 +159,7 @@ impl Decoder {
     }
   }
 
-  fn decode_str(&self, chars: &mut Chars, len: u32) -> Result<BencodeType, BencodeError> {
+  fn decode_str(&self, chars: &mut Peekable<Chars>, len: u32) -> Result<BencodeType, BencodeError> {
     let mut res = String::new();
     let mut len = len;
     while len > 0 {
@@ -157,11 +169,10 @@ impl Decoder {
       )))?);
       len -= 1;
     }
-
     Ok(BencodeType::BtString(res))
   }
 
-  fn decode_int(&self, chars: &mut Chars) -> Result<BencodeType, BencodeError> {
+  fn decode_int(&self, chars: &mut Peekable<Chars>) -> Result<BencodeType, BencodeError> {
     let mut res = String::new();
 
     while let Some(ch) = chars.next() {
@@ -171,25 +182,36 @@ impl Decoder {
 
       res.push(ch);
     }
-
     Ok(BencodeType::BtInt(res.parse::<i32>()?))
   }
 
-  fn decode_list(&self, chars: &mut Chars) -> Result<BencodeType, BencodeError> {
+  fn decode_list(&self, chars: &mut Peekable<Chars>) -> Result<BencodeType, BencodeError> {
     let mut list = Vec::new();
-
-    while let Some(ch) = chars.next() {
-      if ch == 'e' {
+    while let Some(ch) = chars.peek() {
+      if *ch == 'e' {
         break;
       }
-
-      list.push(self.decode_chars(chars)?)
+      list.push(self.decode_chars(chars)?);
     }
-
+    chars.next();
     Ok(BencodeType::BtList(list))
   }
 
-  fn decode_dict(&self, chars: &mut Chars) -> Result<BencodeType, BencodeError> {
-    let mut map = HashMap::new();
+  fn decode_dict(&self, chars: &mut Peekable<Chars>) -> Result<BencodeType, BencodeError> {
+    let mut res = HashMap::new();
+
+    while let Some(ch) = chars.peek() {
+      if *ch == 'e' {
+        break;
+      }
+
+      // key
+      let key = self.decode_chars(chars)?;
+      // value
+      let value = self.decode_chars(chars)?;
+      res.insert(key, value);
+    }
+
+    Ok(BencodeType::BtDict(res))
   }
 }
