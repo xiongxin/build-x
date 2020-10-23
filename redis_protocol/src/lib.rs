@@ -4,6 +4,8 @@ use std::hash::{Hash, Hasher};
 use std::num::ParseIntError;
 use thiserror::Error;
 
+mod redis_client;
+
 const CRLF: &'static str = "\r\n";
 const REDISNIL: &'static str = "\0\0";
 
