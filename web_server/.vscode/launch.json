@@ -1,0 +1,31 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug executable 'web_server'",
+      "program": "${workspaceFolder}/target/debug/web_server",
+      "cargo": {
+        "args": [
+          "build",
+          "--bin=web_server",
+          "--package=web_server"
+        ],
+        "filter": {
+          "name": "web_server",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "stopOnEntry": false,
+      "sourceLanguages": [
+        "rust"
+      ]
+    }
+  ]
+}

@@ -211,7 +211,7 @@ impl Decoder {
       let value = self.decode_chars(chars)?;
       res.insert(key, value);
     }
-
+    chars.next();
     Ok(BencodeType::BtDict(res))
   }
 }
