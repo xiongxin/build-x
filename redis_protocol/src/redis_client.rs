@@ -64,18 +64,14 @@ impl Redis {
     }
 
     let arr = RedisValue::RArray(cmd_values);
-    let write_len = self.socket.write(arr.encode().as_bytes())?;
+    self.socket.write(arr.encode().as_bytes())?;
     self.socket.flush()?;
-    println!("write_len = {}, write_str = {}==", write_len, arr.encode());
     let form = self.read_from()?;
-    println!("form = {}", form);
     Ok(RedisValue::decode(&form)?)
   }
 
   fn read_from(&mut self) -> Result<String> {
     let mut form = self.receive_managed(1)?;
-    println!("read form = {}", form);
-
     match &form[..] {
       "+" => {
         form = form + &self.read_stream(CRLF)?;
@@ -88,7 +84,7 @@ impl Redis {
       }
       "$" => {
         let bulk_len: i32 = self.read_stream(CRLF)?.trim().parse()?;
-        form = format!("{}{}", form, bulk_len);
+        form = format!("{}{}{}", form, bulk_len, CRLF);
         if bulk_len == -1 {
           form = form + CRLF;
         } else {
@@ -117,13 +113,9 @@ impl Redis {
   }
 
   fn receive_managed(&mut self, size: usize) -> Result<String> {
-    let mut buf: Vec<u8> = Vec::with_capacity(100);
-    let read_size = self.socket.read(&mut buf[..])?;
-    println!(
-      "buf = {:?}, read_size = {}, size = {}",
-      buf, read_size, size
-    );
-    Ok(String::from_utf8(buf)?)
+    let mut buffer = vec![0; size];
+    self.socket.read(&mut buffer)?;
+    Ok(String::from_utf8(buffer)?)
   }
 
   fn read_stream(&mut self, break_after: &str) -> Result<String> {
