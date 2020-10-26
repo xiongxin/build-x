@@ -4,7 +4,7 @@ use std::hash::{Hash, Hasher};
 use std::num::ParseIntError;
 use thiserror::Error;
 
-mod redis_client;
+pub mod redis_client;
 
 const CRLF: &'static str = "\r\n";
 const REDISNIL: &'static str = "\0\0";
@@ -91,6 +91,9 @@ pub enum RedisError {
 
   #[error("数组长度解析错误")]
   DecodeArraySizeParseIntError(#[from] ParseIntError),
+
+  #[error("not found \\r\\n, redis format error")]
+  DecodeFormatError,
 }
 
 impl RedisValue {
@@ -128,10 +131,7 @@ impl RedisValue {
   }
 
   fn decode_str<'a>(chars: &'a str) -> Result<(RedisValue, &'a str), RedisError> {
-    let idx = chars.find(CRLF).ok_or(RedisError::DecodeError(format!(
-      "readis字符格式错误,找不到\\r\\n: {}",
-      chars
-    )))?;
+    let idx = chars.find(CRLF).ok_or(RedisError::DecodeFormatError)?;
 
     Ok((
       RedisValue::RStr(chars[1..idx].to_owned()),
@@ -140,10 +140,7 @@ impl RedisValue {
   }
 
   fn decode_bulk_str<'a>(chars: &'a str) -> Result<(RedisValue, &'a str), RedisError> {
-    let idx = chars.find(CRLF).ok_or(RedisError::DecodeError(format!(
-      "readis字符格式错误,找不到\\r\\n: {}",
-      chars
-    )))?;
+    let idx = chars.find(CRLF).ok_or(RedisError::DecodeFormatError)?;
 
     let str_len = chars[1..idx].parse::<usize>()?;
     let start = idx + 2;
@@ -156,10 +153,7 @@ impl RedisValue {
   }
 
   fn decode_error<'a>(chars: &'a str) -> Result<(RedisValue, &'a str), RedisError> {
-    let idx = chars.find(CRLF).ok_or(RedisError::DecodeError(format!(
-      "readis字符格式错误,找不到\\r\\n: {}",
-      chars
-    )))?;
+    let idx = chars.find(CRLF).ok_or(RedisError::DecodeFormatError)?;
 
     Ok((
       RedisValue::RError(chars[1..idx].to_owned()),
@@ -168,19 +162,13 @@ impl RedisValue {
   }
 
   fn decode_int<'a>(chars: &'a str) -> Result<(RedisValue, &'a str), RedisError> {
-    let idx = chars.find(CRLF).ok_or(RedisError::DecodeError(format!(
-      "readis字符格式错误,找不到\\r\\n: {}",
-      chars
-    )))?;
+    let idx = chars.find(CRLF).ok_or(RedisError::DecodeFormatError)?;
 
     Ok((RedisValue::RInt(chars[1..idx].parse()?), &chars[idx + 2..]))
   }
 
   fn decode_arr<'a>(chars: &'a str) -> Result<(RedisValue, &'a str), RedisError> {
-    let idx = chars.find(CRLF).ok_or(RedisError::DecodeError(format!(
-      "readis字符格式错误,找不到\\r\\n: {}",
-      chars
-    )))?;
+    let idx = chars.find(CRLF).ok_or(RedisError::DecodeFormatError)?;
 
     let mut arr_len = chars[1..idx].parse::<i32>()?;
     let mut res = Vec::new();
