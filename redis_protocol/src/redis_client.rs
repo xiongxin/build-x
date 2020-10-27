@@ -10,7 +10,7 @@ use std::string::FromUtf8Error;
 use std::time;
 use thiserror::Error;
 
-pub struct Redis {
+pub struct RedisClient {
   socket: TcpStream,
   connected: bool,
   pub timeout: u64,
@@ -18,7 +18,7 @@ pub struct Redis {
 }
 
 #[derive(Error, Debug)]
-pub enum RedisError {
+pub enum RedisClientError {
   #[error("redis open error: {0}")]
   OpenError(#[from] io::Error),
 
@@ -35,16 +35,16 @@ pub enum RedisError {
   RedisDecodeError(#[from] super::RedisError),
 }
 
-type Result<T> = std::result::Result<T, RedisError>;
+type Result<T> = std::result::Result<T, RedisClientError>;
 
-impl Redis {
-  pub fn open(addr: &str, timeout: u64) -> Result<Redis> {
+impl RedisClient {
+  pub fn open(addr: &str, timeout: u64) -> Result<RedisClient> {
     let tcp = TcpStream::connect_timeout(
       &addr.parse::<SocketAddr>()?,
       time::Duration::new(timeout, 0),
     )?;
 
-    Ok(Redis {
+    Ok(RedisClient {
       socket: tcp,
       connected: true,
       timeout,

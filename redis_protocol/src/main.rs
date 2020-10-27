@@ -27,7 +27,7 @@ fn main() -> Result<()> {
   .encode();
   println!("{}", RedisValue::decode(&arr_str)?);
 
-  let mut rclient = redis_client::Redis::open("127.0.0.1:6379", 5)?;
+  let mut rclient = redis_client::RedisClient::open("127.0.0.1:6379", 5)?;
   let mut args = vec!["abc"];
   println!("redis get a = {}", rclient.exec_command("GET", &mut args)?);
   Ok(())
