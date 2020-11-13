@@ -22,7 +22,7 @@ impl fmt::Display for HttpVersion {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum HttpMethod {
   Head,
   Get,
@@ -234,7 +234,7 @@ fn parse_header(line: &str, sep: &str) -> Result<(String, HttpHeaderValues), Hea
 }
 
 #[derive(Debug)]
-struct FormPart {
+pub struct FormPart {
   name: String,
   headers: HttpHeaders,
   filename: String,
@@ -262,10 +262,10 @@ impl fmt::Display for FormPart {
   }
 }
 
-type FormMultiPart = HashMap<String, FormPart>;
+pub type FormMultiPart = HashMap<String, FormPart>;
 
 #[derive(Debug)]
-struct Request {
+pub struct Request {
   pub http_method: HttpMethod,
   pub request_uri: String,
   pub http_version: HttpVersion,
@@ -291,15 +291,43 @@ pub struct Response {
 type MiddlewareFunc = Box<FnMut(&mut Request, &mut Response) -> bool>;
 type HandlerFunc = Box<FnMut(&mut Request, &mut Response)>;
 
-struct RouterValue {
+pub struct RouterValue {
   handler_func: HandlerFunc,
   http_method: HttpMethod,
   middlewares: Vec<MiddlewareFunc>,
 }
 
-struct Router {
+pub struct Router {
   map: HashMap<String, RouterValue>,
   not_found_handler: HandlerFunc,
+}
+
+impl Router {
+  pub fn new(not_found_handler: HandlerFunc) -> Router {
+    Router {
+      map: HashMap::new(),
+      not_found_handler,
+    }
+  }
+
+  // 通过路径寻找指定的路由
+  pub fn get_by_path(&mut self, path: &str, http_method: HttpMethod) -> Option<&RouterValue> {
+    if let Some(v) = self.map.get(path) {
+      if v.http_method == http_method {
+        return Some(v);
+      }
+    }
+
+    for (handler_path, router_value) in &self.map {
+      if router_value.http_method != http_method {
+        continue;
+      }
+
+      let path_parts = path.split("/");
+    }
+
+    None
+  }
 }
 
 pub fn abort_with(res: &mut Response, msg: &str, code: HttpCode) {
@@ -307,7 +335,12 @@ pub fn abort_with(res: &mut Response, msg: &str, code: HttpCode) {
   res.code = code;
 }
 
-pub fn redirect_to()
+pub fn redirect_to(res: &mut Response, url: &str) {
+  res.code = Http301;
+  res
+    .headers
+    .insert("Location".to_owned(), vec![url.to_owned()]);
+}
 
 #[cfg(test)]
 mod test {
